@@ -1,0 +1,11 @@
+use_frameworks!
+
+target 'SCNVideoWriter_Example' do
+  pod 'SCNVideoWriter', :path => '../'
+
+  target 'SCNVideoWriter_Tests' do
+    inherit! :search_paths
+
+    
+  end
+end

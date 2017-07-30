@@ -29,7 +29,7 @@
 
 /* Begin PBXFileReference section */
 		079BC9F1D1BFB1B60C61DFC1 /* Pods-SCNVideoWriter_Example.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SCNVideoWriter_Example.debug.xcconfig"; path = "Pods/Target Support Files/Pods-SCNVideoWriter_Example/Pods-SCNVideoWriter_Example.debug.xcconfig"; sourceTree = "<group>"; };
-		25DBF12E7CE5BABAA1C7AD03 /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; name = LICENSE; path = ../LICENSE; sourceTree = "<group>"; };
+		25DBF12E7CE5BABAA1C7AD03 /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = LICENSE; path = ../LICENSE; sourceTree = "<group>"; };
 		2AF23AF3810D881250001A04 /* Pods-SCNVideoWriter_Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SCNVideoWriter_Tests.release.xcconfig"; path = "Pods/Target Support Files/Pods-SCNVideoWriter_Tests/Pods-SCNVideoWriter_Tests.release.xcconfig"; sourceTree = "<group>"; };
 		3C30EB50A8AEF0CBDEA13B25 /* Pods_SCNVideoWriter_Example.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SCNVideoWriter_Example.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		5BEA205436D94058F0635032 /* Pods-SCNVideoWriter_Example.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SCNVideoWriter_Example.release.xcconfig"; path = "Pods/Target Support Files/Pods-SCNVideoWriter_Example/Pods-SCNVideoWriter_Example.release.xcconfig"; sourceTree = "<group>"; };
@@ -44,8 +44,8 @@
 		607FACEA1AFB9204008FA782 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		607FACEB1AFB9204008FA782 /* Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tests.swift; sourceTree = "<group>"; };
 		9EF71FF0D77F00621C1B4BAD /* Pods_SCNVideoWriter_Tests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SCNVideoWriter_Tests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		ADCD4F58EC08C252163D4C30 /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; name = README.md; path = ../README.md; sourceTree = "<group>"; };
-		CA1102A2A2C4951411716431 /* SCNVideoWriter.podspec */ = {isa = PBXFileReference; includeInIndex = 1; name = SCNVideoWriter.podspec; path = ../SCNVideoWriter.podspec; sourceTree = "<group>"; };
+		ADCD4F58EC08C252163D4C30 /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../README.md; sourceTree = "<group>"; };
+		CA1102A2A2C4951411716431 /* SCNVideoWriter.podspec */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = SCNVideoWriter.podspec; path = ../SCNVideoWriter.podspec; sourceTree = "<group>"; };
 		EB1B46CC9FFA4CE345FBFE3A /* Pods-SCNVideoWriter_Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SCNVideoWriter_Tests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-SCNVideoWriter_Tests/Pods-SCNVideoWriter_Tests.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -215,11 +215,15 @@
 				TargetAttributes = {
 					607FACCF1AFB9204008FA782 = {
 						CreatedOnToolsVersion = 6.3.1;
+						DevelopmentTeam = FBQ6Z8AF3U;
 						LastSwiftMigration = 0820;
+						ProvisioningStyle = Manual;
 					};
 					607FACE41AFB9204008FA782 = {
 						CreatedOnToolsVersion = 6.3.1;
+						DevelopmentTeam = FBQ6Z8AF3U;
 						LastSwiftMigration = 0820;
+						ProvisioningStyle = Manual;
 						TestTargetID = 607FACCF1AFB9204008FA782;
 					};
 				};
@@ -496,11 +500,16 @@
 			baseConfigurationReference = 079BC9F1D1BFB1B60C61DFC1 /* Pods-SCNVideoWriter_Example.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_STYLE = Manual;
+				DEVELOPMENT_TEAM = FBQ6Z8AF3U;
 				INFOPLIST_FILE = SCNVideoWriter/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.3;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				MODULE_NAME = ExampleApp;
 				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.demo.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "905ee6bd-d0b8-4820-ab2d-03b079ef72eb";
+				PROVISIONING_PROFILE_SPECIFIER = "noppelabs-*";
 				SWIFT_VERSION = 3.0;
 			};
 			name = Debug;
@@ -510,11 +519,16 @@
 			baseConfigurationReference = 5BEA205436D94058F0635032 /* Pods-SCNVideoWriter_Example.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_STYLE = Manual;
+				DEVELOPMENT_TEAM = FBQ6Z8AF3U;
 				INFOPLIST_FILE = SCNVideoWriter/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.3;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				MODULE_NAME = ExampleApp;
 				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.demo.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "905ee6bd-d0b8-4820-ab2d-03b079ef72eb";
+				PROVISIONING_PROFILE_SPECIFIER = "noppelabs-*";
 				SWIFT_VERSION = 3.0;
 			};
 			name = Release;
@@ -523,6 +537,9 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = EB1B46CC9FFA4CE345FBFE3A /* Pods-SCNVideoWriter_Tests.debug.xcconfig */;
 			buildSettings = {
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_STYLE = Manual;
+				DEVELOPMENT_TEAM = FBQ6Z8AF3U;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SDKROOT)/Developer/Library/Frameworks",
 					"$(inherited)",
@@ -535,6 +552,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 3.0;
 			};
 			name = Debug;
@@ -543,6 +561,9 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 2AF23AF3810D881250001A04 /* Pods-SCNVideoWriter_Tests.release.xcconfig */;
 			buildSettings = {
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_STYLE = Manual;
+				DEVELOPMENT_TEAM = FBQ6Z8AF3U;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SDKROOT)/Developer/Library/Frameworks",
 					"$(inherited)",
@@ -551,6 +572,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 3.0;
 			};
 			name = Release;

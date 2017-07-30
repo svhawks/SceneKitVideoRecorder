@@ -22,7 +22,7 @@ pod "SCNVideoWriter"
 
 ## Author
 
-noppefoxwolf, tomoya.hirano@dena.com
+noppefoxwolf, noppelabs@gmail.com
 
 ## License
 

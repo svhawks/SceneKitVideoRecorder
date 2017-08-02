@@ -9,7 +9,7 @@ EXTERNAL SOURCES:
     :path: "../"
 
 SPEC CHECKSUMS:
-  SCNVideoWriter: b91dcb55cbf5be8c95b5ea6086ca003f1e4ad2ad
+  SCNVideoWriter: 29d821b31cef64659f204f9cc574242b95d8d538
 
 PODFILE CHECKSUM: 82bad70245a28ecd3a0db4c94adf58fcf37db6d6
 

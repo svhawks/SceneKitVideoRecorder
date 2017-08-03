@@ -13,7 +13,11 @@ import SCNVideoWriter
 import Photos
 
 @available(iOS 11.0, *)
-final class ViewController: UIViewController {
+final class ARViewController: UIViewController {
+  static func make() -> ARViewController {
+    return UIStoryboard(name: "AR", bundle: nil).instantiateInitialViewController() as! ARViewController
+  }
+  
   @IBOutlet private weak var sceneView: ARSCNView!
   private var writer: SCNVideoWriter? = nil
   

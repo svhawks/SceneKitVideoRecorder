@@ -1,10 +1,12 @@
 Pod::Spec.new do |s|
   s.name             = 'SCNVideoWriter'
   s.version          = '0.1.0'
-  s.summary          = 'A short description of SCNVideoWriter.'
+  s.summary          = 'A simple recorder for SceneKit.'
 
   s.description      = <<-DESC
-TODO: Add long description of the pod here.
+SCNVideoWriter is a simple video writer for SCNScene.
+It's support iOS10 or later on Metal supported device.
+And support video and overlay of ARKit.
                        DESC
 
   s.homepage         = 'https://github.com/noppefoxwolf/SCNVideoWriter'

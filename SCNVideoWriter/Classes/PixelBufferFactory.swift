@@ -8,23 +8,15 @@
 import UIKit
 
 struct PixelBufferFactory {
-  static func make(withSize size: CGSize, fromImage image: UIImage, usingBufferPool pool: CVPixelBufferPool) -> CVPixelBuffer {
-    
+  static func make(with size: CGSize, from image: UIImage, usingBuffer pool: CVPixelBufferPool) -> CVPixelBuffer? {
     var pixelBufferOut: CVPixelBuffer?
-    
     let status = CVPixelBufferPoolCreatePixelBuffer(kCFAllocatorDefault, pool, &pixelBufferOut)
-    
-    if status != kCVReturnSuccess {
-      fatalError("CVPixelBufferPoolCreatePixelBuffer() failed")
-    }
-    
-    let pixelBuffer = pixelBufferOut!
-    
+    guard status == kCVReturnSuccess else { return nil }
+    guard let pixelBuffer = pixelBufferOut else { return nil }
     CVPixelBufferLockBaseAddress(pixelBuffer, CVPixelBufferLockFlags.readOnly)
-    
     let data = CVPixelBufferGetBaseAddress(pixelBuffer)
     
-    let context = CGContext(
+    guard let context = CGContext(
       data: data,
       width: Int(size.width),
       height: Int(size.height),
@@ -32,18 +24,12 @@ struct PixelBufferFactory {
       bytesPerRow: CVPixelBufferGetBytesPerRow(pixelBuffer),
       space: CGColorSpaceCreateDeviceRGB(),
       bitmapInfo: CGImageAlphaInfo.premultipliedFirst.rawValue
-    )
-    
-    if context == nil {
-      assert(false, "Could not create context from pixel buffer")
-    }
-    
-    context?.clear(CGRect(x: 0, y: 0, width: size.width, height: size.height))
-    
-    context?.draw(image.cgImage!, in: CGRect(x: 0, y: 0, width: size.width, height: size.height))
-    
+    ) else { return nil }
+    guard let cgImage = image.cgImage else { return nil }
+    let drawRect = CGRect(origin: .zero, size: size)
+    context.clear(drawRect)
+    context.draw(cgImage, in: drawRect)
     CVPixelBufferUnlockBaseAddress(pixelBuffer, CVPixelBufferLockFlags.readOnly)
-    
     return pixelBuffer
   }
 }

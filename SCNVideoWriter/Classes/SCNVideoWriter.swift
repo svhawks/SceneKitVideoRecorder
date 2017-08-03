@@ -111,7 +111,7 @@ public class SCNVideoWriter {
 
 extension SCNVideoWriter {
   public struct Options {
-    public var timeScale: Int32 = 600
+    public var timeScale: Int32
     public var videoSize: CGSize
     public var fps: Int
     public var outputUrl: URL
@@ -120,7 +120,8 @@ extension SCNVideoWriter {
     public var deleteFileIfExists: Bool
     
     public static var `default`: Options {
-      return Options(videoSize: CGSize(width: 640, height: 640),
+      return Options(timeScale: 600,
+                     videoSize: CGSize(width: 640, height: 640),
                      fps: 60,
                      outputUrl: URL(fileURLWithPath: NSTemporaryDirectory() + "output.mp4"),
                      fileType: AVFileTypeAppleM4V,

@@ -1,6 +1,5 @@
-# [WIP]SCNVideoWriter
+# SCNVideoWriter
 
-[![CI Status](http://img.shields.io/travis/noppefoxwolf/SCNVideoWriter.svg?style=flat)](https://travis-ci.org/noppefoxwolf/SCNVideoWriter)
 [![Version](https://img.shields.io/cocoapods/v/SCNVideoWriter.svg?style=flat)](http://cocoapods.org/pods/SCNVideoWriter)
 [![License](https://img.shields.io/cocoapods/l/SCNVideoWriter.svg?style=flat)](http://cocoapods.org/pods/SCNVideoWriter)
 [![Platform](https://img.shields.io/cocoapods/p/SCNVideoWriter.svg?style=flat)](http://cocoapods.org/pods/SCNVideoWriter)
@@ -18,6 +17,16 @@ it, simply add the following line to your Podfile:
 
 ```ruby
 pod "SCNVideoWriter"
+```
+
+## Usage
+
+```
+let writer = try! SCNVideoWriter(scene: sceneView.scene)
+writer.startWriting()
+writer.finisheWriting(completionHandler: { [weak self] (url) in
+  print("done", url)
+})
 ```
 
 ## Author

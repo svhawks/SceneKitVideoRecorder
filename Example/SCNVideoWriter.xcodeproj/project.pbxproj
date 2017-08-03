@@ -15,7 +15,6 @@
 		607FACE01AFB9204008FA782 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 607FACDE1AFB9204008FA782 /* LaunchScreen.xib */; };
 		607FACEC1AFB9204008FA782 /* Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACEB1AFB9204008FA782 /* Tests.swift */; };
 		BFF9EAA01522EF3FAD03FDDC /* Pods_SCNVideoWriter_Example.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C30EB50A8AEF0CBDEA13B25 /* Pods_SCNVideoWriter_Example.framework */; };
-		D773511D1F30E3C0004788CB /* DemoCubeScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = D773511C1F30E3C0004788CB /* DemoCubeScene.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -47,7 +46,6 @@
 		9EF71FF0D77F00621C1B4BAD /* Pods_SCNVideoWriter_Tests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SCNVideoWriter_Tests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		ADCD4F58EC08C252163D4C30 /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../README.md; sourceTree = "<group>"; };
 		CA1102A2A2C4951411716431 /* SCNVideoWriter.podspec */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = SCNVideoWriter.podspec; path = ../SCNVideoWriter.podspec; sourceTree = "<group>"; };
-		D773511C1F30E3C0004788CB /* DemoCubeScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoCubeScene.swift; sourceTree = "<group>"; };
 		EB1B46CC9FFA4CE345FBFE3A /* Pods-SCNVideoWriter_Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SCNVideoWriter_Tests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-SCNVideoWriter_Tests/Pods-SCNVideoWriter_Tests.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -121,7 +119,6 @@
 				607FACDC1AFB9204008FA782 /* Images.xcassets */,
 				607FACDE1AFB9204008FA782 /* LaunchScreen.xib */,
 				607FACD31AFB9204008FA782 /* Supporting Files */,
-				D773511C1F30E3C0004788CB /* DemoCubeScene.swift */,
 			);
 			name = "Example for SCNVideoWriter";
 			path = SCNVideoWriter;
@@ -370,7 +367,6 @@
 			files = (
 				607FACD81AFB9204008FA782 /* ViewController.swift in Sources */,
 				607FACD61AFB9204008FA782 /* AppDelegate.swift in Sources */,
-				D773511D1F30E3C0004788CB /* DemoCubeScene.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

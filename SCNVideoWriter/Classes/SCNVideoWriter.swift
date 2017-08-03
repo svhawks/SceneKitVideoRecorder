@@ -10,12 +10,6 @@ import SceneKit
 import AVFoundation
 
 public class SCNVideoWriter {
-  enum State {
-    case idle
-    case progress
-    case finished
-  }
-  
   private let writer: AVAssetWriter
   private let input: AVAssetWriterInput
   private let pixelBufferAdaptor: AVAssetWriterInputPixelBufferAdaptor

@@ -9,12 +9,16 @@
 /* Begin PBXBuildFile section */
 		1D342F4DFDA5CBB0F085909A /* Pods_SCNVideoWriter_Tests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9EF71FF0D77F00621C1B4BAD /* Pods_SCNVideoWriter_Tests.framework */; };
 		607FACD61AFB9204008FA782 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACD51AFB9204008FA782 /* AppDelegate.swift */; };
-		607FACD81AFB9204008FA782 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACD71AFB9204008FA782 /* ViewController.swift */; };
-		607FACDB1AFB9204008FA782 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 607FACD91AFB9204008FA782 /* Main.storyboard */; };
+		607FACD81AFB9204008FA782 /* ARViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACD71AFB9204008FA782 /* ARViewController.swift */; };
+		607FACDB1AFB9204008FA782 /* AR.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 607FACD91AFB9204008FA782 /* AR.storyboard */; };
 		607FACDD1AFB9204008FA782 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 607FACDC1AFB9204008FA782 /* Images.xcassets */; };
 		607FACE01AFB9204008FA782 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 607FACDE1AFB9204008FA782 /* LaunchScreen.xib */; };
 		607FACEC1AFB9204008FA782 /* Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACEB1AFB9204008FA782 /* Tests.swift */; };
 		BFF9EAA01522EF3FAD03FDDC /* Pods_SCNVideoWriter_Example.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C30EB50A8AEF0CBDEA13B25 /* Pods_SCNVideoWriter_Example.framework */; };
+		D7C292FC1F33985300F88A39 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D7C292FB1F33985300F88A39 /* Main.storyboard */; };
+		D7C292FE1F33985D00F88A39 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7C292FD1F33985D00F88A39 /* ViewController.swift */; };
+		D7C293021F3398AB00F88A39 /* SCNViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7C293011F3398AB00F88A39 /* SCNViewController.swift */; };
+		D7C293041F3398B200F88A39 /* SCN.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D7C293031F3398B200F88A39 /* SCN.storyboard */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -36,8 +40,8 @@
 		607FACD01AFB9204008FA782 /* SCNVideoWriter_Example.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SCNVideoWriter_Example.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		607FACD41AFB9204008FA782 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		607FACD51AFB9204008FA782 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		607FACD71AFB9204008FA782 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
-		607FACDA1AFB9204008FA782 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		607FACD71AFB9204008FA782 /* ARViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ARViewController.swift; sourceTree = "<group>"; };
+		607FACDA1AFB9204008FA782 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/AR.storyboard; sourceTree = "<group>"; };
 		607FACDC1AFB9204008FA782 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		607FACDF1AFB9204008FA782 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LaunchScreen.xib; sourceTree = "<group>"; };
 		607FACE51AFB9204008FA782 /* SCNVideoWriter_Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SCNVideoWriter_Tests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -46,6 +50,10 @@
 		9EF71FF0D77F00621C1B4BAD /* Pods_SCNVideoWriter_Tests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SCNVideoWriter_Tests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		ADCD4F58EC08C252163D4C30 /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../README.md; sourceTree = "<group>"; };
 		CA1102A2A2C4951411716431 /* SCNVideoWriter.podspec */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = SCNVideoWriter.podspec; path = ../SCNVideoWriter.podspec; sourceTree = "<group>"; };
+		D7C292FB1F33985300F88A39 /* Main.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
+		D7C292FD1F33985D00F88A39 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		D7C293011F3398AB00F88A39 /* SCNViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SCNViewController.swift; sourceTree = "<group>"; };
+		D7C293031F3398B200F88A39 /* SCN.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = SCN.storyboard; sourceTree = "<group>"; };
 		EB1B46CC9FFA4CE345FBFE3A /* Pods-SCNVideoWriter_Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SCNVideoWriter_Tests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-SCNVideoWriter_Tests/Pods-SCNVideoWriter_Tests.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -113,12 +121,14 @@
 		607FACD21AFB9204008FA782 /* Example for SCNVideoWriter */ = {
 			isa = PBXGroup;
 			children = (
+				D7C293001F3398A200F88A39 /* SCN */,
+				D7C292FF1F33989800F88A39 /* AR */,
 				607FACD51AFB9204008FA782 /* AppDelegate.swift */,
-				607FACD71AFB9204008FA782 /* ViewController.swift */,
-				607FACD91AFB9204008FA782 /* Main.storyboard */,
 				607FACDC1AFB9204008FA782 /* Images.xcassets */,
 				607FACDE1AFB9204008FA782 /* LaunchScreen.xib */,
 				607FACD31AFB9204008FA782 /* Supporting Files */,
+				D7C292FB1F33985300F88A39 /* Main.storyboard */,
+				D7C292FD1F33985D00F88A39 /* ViewController.swift */,
 			);
 			name = "Example for SCNVideoWriter";
 			path = SCNVideoWriter;
@@ -157,6 +167,24 @@
 				25DBF12E7CE5BABAA1C7AD03 /* LICENSE */,
 			);
 			name = "Podspec Metadata";
+			sourceTree = "<group>";
+		};
+		D7C292FF1F33989800F88A39 /* AR */ = {
+			isa = PBXGroup;
+			children = (
+				607FACD71AFB9204008FA782 /* ARViewController.swift */,
+				607FACD91AFB9204008FA782 /* AR.storyboard */,
+			);
+			name = AR;
+			sourceTree = "<group>";
+		};
+		D7C293001F3398A200F88A39 /* SCN */ = {
+			isa = PBXGroup;
+			children = (
+				D7C293011F3398AB00F88A39 /* SCNViewController.swift */,
+				D7C293031F3398B200F88A39 /* SCN.storyboard */,
+			);
+			name = SCN;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -252,9 +280,11 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				607FACDB1AFB9204008FA782 /* Main.storyboard in Resources */,
+				607FACDB1AFB9204008FA782 /* AR.storyboard in Resources */,
 				607FACE01AFB9204008FA782 /* LaunchScreen.xib in Resources */,
 				607FACDD1AFB9204008FA782 /* Images.xcassets in Resources */,
+				D7C293041F3398B200F88A39 /* SCN.storyboard in Resources */,
+				D7C292FC1F33985300F88A39 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -365,7 +395,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				607FACD81AFB9204008FA782 /* ViewController.swift in Sources */,
+				D7C292FE1F33985D00F88A39 /* ViewController.swift in Sources */,
+				D7C293021F3398AB00F88A39 /* SCNViewController.swift in Sources */,
+				607FACD81AFB9204008FA782 /* ARViewController.swift in Sources */,
 				607FACD61AFB9204008FA782 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -389,12 +421,12 @@
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
-		607FACD91AFB9204008FA782 /* Main.storyboard */ = {
+		607FACD91AFB9204008FA782 /* AR.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
 				607FACDA1AFB9204008FA782 /* Base */,
 			);
-			name = Main.storyboard;
+			name = AR.storyboard;
 			sourceTree = "<group>";
 		};
 		607FACDE1AFB9204008FA782 /* LaunchScreen.xib */ = {
@@ -503,7 +535,7 @@
 				CODE_SIGN_STYLE = Manual;
 				DEVELOPMENT_TEAM = FBQ6Z8AF3U;
 				INFOPLIST_FILE = SCNVideoWriter/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				MODULE_NAME = ExampleApp;
 				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.demo.$(PRODUCT_NAME:rfc1034identifier)";
@@ -522,7 +554,7 @@
 				CODE_SIGN_STYLE = Manual;
 				DEVELOPMENT_TEAM = FBQ6Z8AF3U;
 				INFOPLIST_FILE = SCNVideoWriter/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				MODULE_NAME = ExampleApp;
 				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.demo.$(PRODUCT_NAME:rfc1034identifier)";

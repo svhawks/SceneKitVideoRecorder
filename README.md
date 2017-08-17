@@ -24,7 +24,7 @@ pod "SCNVideoWriter"
 ```
 let writer = try! SCNVideoWriter(scene: sceneView.scene)
 writer.startWriting()
-writer.finisheWriting(completionHandler: { [weak self] (url) in
+writer.finishWriting(completionHandler: { [weak self] (url) in
   print("done", url)
 })
 ```

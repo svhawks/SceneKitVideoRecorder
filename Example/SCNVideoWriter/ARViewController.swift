@@ -24,6 +24,13 @@ final class ARViewController: UIViewController {
   override func viewDidLoad() {
     super.viewDidLoad()
     sceneView.debugOptions = [ARSCNDebugOptions.showFeaturePoints, ARSCNDebugOptions.showWorldOrigin]
+    setupARScene()
+  }
+  
+  private func setupARScene() {
+    let box = SCNBox(width: 0.1, height: 0.1, length: 0.1, chamferRadius: 0.0)
+    let node = SCNNode(geometry: box)
+    sceneView.scene.rootNode.addChildNode(node)
   }
   
   override func viewWillAppear(_ animated: Bool) {
@@ -38,7 +45,7 @@ final class ARViewController: UIViewController {
   
   override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
     do {
-      writer = try SCNVideoWriter(scene: sceneView.scene)
+      writer = try SCNVideoWriter(withARSCNView: sceneView)
       writer?.startWriting()
     } catch let e {
       print(e)
@@ -46,7 +53,7 @@ final class ARViewController: UIViewController {
   }
   
   override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
-    writer?.finisheWriting(completionHandler: { [weak self] (url) in
+    writer?.finishWriting(completionHandler: { [weak self] (url) in
       print("done", url)
       self?.save(video: url)
     })

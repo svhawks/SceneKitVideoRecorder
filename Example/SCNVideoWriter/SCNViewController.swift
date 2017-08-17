@@ -59,7 +59,7 @@ final class SCNViewController: UIViewController {
   }
   
   override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
-    writer?.finisheWriting(completionHandler: { [weak self] (url) in
+    writer?.finishWriting(completionHandler: { [weak self] (url) in
       print("done", url)
       self?.save(video: url)
     })

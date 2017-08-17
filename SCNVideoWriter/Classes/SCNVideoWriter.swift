@@ -7,6 +7,7 @@
 
 import UIKit
 import SceneKit
+import ARKit
 import AVFoundation
 
 public class SCNVideoWriter {
@@ -23,6 +24,13 @@ public class SCNVideoWriter {
   private var currentTime: CFTimeInterval = 0.0
   
   private var finishedCompletionHandler: ((_ url: URL) -> Void)? = nil
+  
+  @available(iOS 11.0, *)
+  public convenience init?(withARSCNView view: ARSCNView, options: Options = .default) throws {
+    var options = options
+    options.renderSize = CGSize(width: view.bounds.width * view.contentScaleFactor, height: view.bounds.height * view.contentScaleFactor)
+    try self.init(scene: view.scene, options: options)
+  }
   
   public init?(scene: SCNScene, options: Options = .default) throws {
     self.options = options
@@ -55,7 +63,7 @@ public class SCNVideoWriter {
     }
   }
   
-  public func finisheWriting(completionHandler: (@escaping (_ url: URL) -> Void)) {
+  public func finishWriting(completionHandler: (@escaping (_ url: URL) -> Void)) {
     let outputUrl = options.outputUrl
     input.markAsFinished()
     writer.finishWriting(completionHandler: { [weak self] in
@@ -76,8 +84,9 @@ public class SCNVideoWriter {
     frameQueue.async { [weak self] in
       guard let input = self?.input, input.isReadyForMoreMediaData else { return }
       guard let pool = self?.pixelBufferAdaptor.pixelBufferPool else { return }
-      guard let size = self?.options.videoSize else { return }
-      self?.renderSnapshot(with: pool, video: size)
+      guard let renderSize = self?.options.renderSize else { return }
+      guard let videoSize = self?.options.videoSize else { return }
+      self?.renderSnapshot(with: pool, renderSize: renderSize, videoSize: videoSize)
     }
   }
   
@@ -87,11 +96,12 @@ public class SCNVideoWriter {
     input.requestMediaDataWhenReady(on: frameQueue, using: {})
   }
   
-  private func renderSnapshot(with pool: CVPixelBufferPool, video size: CGSize) {
+  private func renderSnapshot(with pool: CVPixelBufferPool, renderSize: CGSize, videoSize: CGSize) {
     guard let link = displayLink else { return }
     currentTime += link.targetTimestamp - link.timestamp
-    let image = renderer.snapshot(atTime: currentTime, with: size, antialiasingMode: .multisampling4X)
-    guard let pixelBuffer = PixelBufferFactory.make(with: size, from: image, usingBuffer: pool) else { return }
+    let image = renderer.snapshot(atTime: currentTime, with: renderSize, antialiasingMode: .multisampling4X)
+    let croppedImage = image.crop(at: videoSize)
+    guard let pixelBuffer = PixelBufferFactory.make(with: videoSize, from: croppedImage, usingBuffer: pool) else { return }
     let value: Int64 = Int64(currentTime * CFTimeInterval(options.timeScale))
     let presentationTime = CMTimeMake(value, options.timeScale)
     pixelBufferAdaptor.append(pixelBuffer, withPresentationTime: presentationTime)
@@ -106,6 +116,7 @@ public class SCNVideoWriter {
 extension SCNVideoWriter {
   public struct Options {
     public var timeScale: Int32
+    public var renderSize: CGSize
     public var videoSize: CGSize
     public var fps: Int
     public var outputUrl: URL
@@ -115,6 +126,7 @@ extension SCNVideoWriter {
     
     public static var `default`: Options {
       return Options(timeScale: 600,
+                     renderSize: CGSize(width: 640, height: 640),
                      videoSize: CGSize(width: 640, height: 640),
                      fps: 60,
                      outputUrl: URL(fileURLWithPath: NSTemporaryDirectory() + "output.mp4"),

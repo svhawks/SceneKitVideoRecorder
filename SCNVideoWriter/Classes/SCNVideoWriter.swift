@@ -99,12 +99,14 @@ public class SCNVideoWriter {
   private func renderSnapshot(with pool: CVPixelBufferPool, renderSize: CGSize, videoSize: CGSize) {
     guard let link = displayLink else { return }
     currentTime += link.targetTimestamp - link.timestamp
-    let image = renderer.snapshot(atTime: currentTime, with: renderSize, antialiasingMode: .multisampling4X)
-    let croppedImage = image.crop(at: videoSize)
-    guard let pixelBuffer = PixelBufferFactory.make(with: videoSize, from: croppedImage, usingBuffer: pool) else { return }
-    let value: Int64 = Int64(currentTime * CFTimeInterval(options.timeScale))
-    let presentationTime = CMTimeMake(value, options.timeScale)
-    pixelBufferAdaptor.append(pixelBuffer, withPresentationTime: presentationTime)
+    autoreleasepool {
+      let image = renderer.snapshot(atTime: currentTime, with: renderSize, antialiasingMode: .multisampling4X)
+      let croppedImage = image.crop(at: videoSize)
+      guard let pixelBuffer = PixelBufferFactory.make(with: videoSize, from: croppedImage, usingBuffer: pool) else { return }
+      let value: Int64 = Int64(currentTime * CFTimeInterval(options.timeScale))
+      let presentationTime = CMTimeMake(value, options.timeScale)
+      pixelBufferAdaptor.append(pixelBuffer, withPresentationTime: presentationTime)
+    }
   }
   
   private func stopDisplayLink() {

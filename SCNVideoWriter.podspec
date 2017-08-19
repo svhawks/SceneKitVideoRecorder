@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name             = 'SCNVideoWriter'
-  s.version          = '0.3.0'
+  s.version          = '0.4.0'
   s.summary          = 'A simple recorder for SceneKit.'
 
   s.description      = <<-DESC

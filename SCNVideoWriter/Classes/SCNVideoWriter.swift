@@ -21,6 +21,7 @@ public class SCNVideoWriter {
   private static let renderQueue = DispatchQueue(label: "com.noppelabs.SCNVideoWriter.renderQueue")
   private static let renderSemaphore = DispatchSemaphore(value: 3)
   private var displayLink: CADisplayLink? = nil
+  private var initialTime: CFTimeInterval = 0.0
   private var currentTime: CFTimeInterval = 0.0
   
   public var updateFrameHandler: ((_ image: UIImage, _ time: CMTime) -> Void)? = nil
@@ -75,6 +76,7 @@ public class SCNVideoWriter {
   
   private func startDisplayLink() {
     currentTime = 0.0
+    initialTime = CFAbsoluteTimeGetCurrent()
     displayLink = CADisplayLink(target: self, selector: #selector(updateDisplayLink))
     displayLink?.preferredFramesPerSecond = options.fps
     displayLink?.add(to: .main, forMode: .commonModes)
@@ -97,17 +99,16 @@ public class SCNVideoWriter {
   }
   
   private func renderSnapshot(with pool: CVPixelBufferPool, renderSize: CGSize, videoSize: CGSize) {
-    guard let link = displayLink else { return }
-    currentTime += link.targetTimestamp - link.timestamp
     autoreleasepool {
+      currentTime = CFAbsoluteTimeGetCurrent() - initialTime
       let image = renderer.snapshot(atTime: currentTime, with: renderSize, antialiasingMode: .multisampling4X)
       let croppedImage = image.crop(at: videoSize)
       guard let pixelBuffer = PixelBufferFactory.make(with: videoSize, from: croppedImage, usingBuffer: pool) else { return }
       let value: Int64 = Int64(currentTime * CFTimeInterval(options.timeScale))
       let presentationTime = CMTimeMake(value, options.timeScale)
       pixelBufferAdaptor.append(pixelBuffer, withPresentationTime: presentationTime)
+      updateFrameHandler?(croppedImage, presentationTime)
     }
-    updateFrameHandler?(croppedImage, presentationTime)
   }
   
   private func stopDisplayLink() {

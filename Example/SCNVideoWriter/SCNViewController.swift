@@ -15,8 +15,10 @@ final class SCNViewController: UIViewController {
   static func make() -> SCNViewController {
     return UIStoryboard(name: "SCN", bundle: nil).instantiateInitialViewController() as! SCNViewController
   } 
-  @IBOutlet private weak var sceneView: SCNView!
+  
+  @IBOutlet private weak var previewImageView: UIImageView!
   private var writer: SCNVideoWriter? = nil
+  private let scene = SCNScene()
   
   override func viewDidLoad() {
     super.viewDidLoad()
@@ -24,8 +26,6 @@ final class SCNViewController: UIViewController {
   }
   
   private func setupSceneView() {
-    let scene = SCNScene()
-    
     let box = SCNBox(width: 10.0, height: 10.0, length: 10.0, chamferRadius: 0.0)
     let boxNode = SCNNode(geometry: box)
     scene.rootNode.addChildNode(boxNode)
@@ -45,13 +45,17 @@ final class SCNViewController: UIViewController {
     lightNode.light = light
     cameraNode.addChildNode(lightNode)
     
-    sceneView.scene = scene
     boxNode.runAction(SCNAction.repeatForever(SCNAction.rotateBy(x: 0, y: 2, z: 0, duration: 1)))
   }
   
   override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
     do {
-      writer = try SCNVideoWriter(scene: sceneView.scene!)
+      writer = try SCNVideoWriter(scene: scene)
+      writer?.updateFrameHandler = { [weak self] (image, time) in
+        DispatchQueue.main.async {
+          self?.previewImageView.image = image
+        }
+      }
       writer?.startWriting()
     } catch let e {
       print(e)

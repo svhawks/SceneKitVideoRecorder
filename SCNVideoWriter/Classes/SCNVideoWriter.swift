@@ -23,6 +23,7 @@ public class SCNVideoWriter {
   private var displayLink: CADisplayLink? = nil
   private var currentTime: CFTimeInterval = 0.0
   
+  public var updateFrameHandler: ((_ image: UIImage, _ time: CMTime) -> Void)? = nil
   private var finishedCompletionHandler: ((_ url: URL) -> Void)? = nil
   
   @available(iOS 11.0, *)
@@ -107,6 +108,7 @@ public class SCNVideoWriter {
       let presentationTime = CMTimeMake(value, options.timeScale)
       pixelBufferAdaptor.append(pixelBuffer, withPresentationTime: presentationTime)
     }
+    updateFrameHandler?(croppedImage, presentationTime)
   }
   
   private func stopDisplayLink() {

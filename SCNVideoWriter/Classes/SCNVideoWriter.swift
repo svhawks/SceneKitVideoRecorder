@@ -18,8 +18,8 @@ public class SCNVideoWriter {
   private let options: Options
   
   private let frameQueue = DispatchQueue(label: "com.noppelabs.SCNVideoWriter.frameQueue")
-  private let renderQueue = DispatchQueue(label: "com.noppelabs.SCNVideoWriter.RenderQueue")
-  private let renderSemaphore = DispatchSemaphore(value: 3)
+  private static let renderQueue = DispatchQueue(label: "com.noppelabs.SCNVideoWriter.renderQueue")
+  private static let renderSemaphore = DispatchSemaphore(value: 3)
   private var displayLink: CADisplayLink? = nil
   private var currentTime: CFTimeInterval = 0.0
   
@@ -42,7 +42,7 @@ public class SCNVideoWriter {
                                     fileType: options.fileType)
     self.input = AVAssetWriterInput(mediaType: AVMediaTypeVideo,
                                     outputSettings: options.assetWriterInputSettings)
-    
+    //input.expectsMediaDataInRealTime = true
     self.pixelBufferAdaptor = AVAssetWriterInputPixelBufferAdaptor(assetWriterInput: input,
                                                                    sourcePixelBufferAttributes: options.sourcePixelBufferAttributes)
     prepare(with: options)
@@ -57,8 +57,8 @@ public class SCNVideoWriter {
   }
   
   public func startWriting() {
-    renderQueue.async { [weak self] in
-      self?.renderSemaphore.wait()
+    SCNVideoWriter.renderQueue.async { [weak self] in
+      SCNVideoWriter.renderSemaphore.wait()
       self?.startDisplayLink()
       self?.startInputPipeline()
     }
@@ -70,7 +70,7 @@ public class SCNVideoWriter {
     writer.finishWriting(completionHandler: { [weak self] in
       completionHandler(outputUrl)
       self?.stopDisplayLink()
-      self?.renderSemaphore.signal()
+      SCNVideoWriter.renderSemaphore.signal()
     })
   }
   

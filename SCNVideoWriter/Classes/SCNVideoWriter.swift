@@ -52,7 +52,6 @@ public class SCNVideoWriter {
     if options.deleteFileIfExists {
       FileController.delete(file: options.outputUrl)
     }
-    renderer.autoenablesDefaultLighting = true
     writer.add(input)
   }
   

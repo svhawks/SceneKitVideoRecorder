@@ -8,17 +8,52 @@
 import UIKit
 
 extension UIImage {
-  func crop(at size: CGSize) -> UIImage {
+  func fill(at targetSize: CGSize) -> UIImage? {
     let imageSize = self.size
-    let cropSize = size
-    let x = (imageSize.width - cropSize.width) / 2.0
-    let y = (imageSize.height - cropSize.height) / 2.0
-    let cropRect = CGRect(x: x, y: y, width: size.width, height: size.height)
-    return crop(to: cropRect)
-  }
-  
-  func crop(to rect: CGRect) -> UIImage {
-    guard let croppedImageRef = cgImage?.cropping(to: rect) else { return UIImage() }
-    return UIImage(cgImage: croppedImageRef, scale: scale, orientation: .up)
+    let width = imageSize.width
+    let height = imageSize.height
+    let targetWidth = targetSize.width
+    let targetHeight = targetSize.height
+    var scaleFactor: CGFloat = 0.0
+    var scaledWidth = targetWidth
+    var scaledHeight = targetHeight
+    var thumbnailPoint = CGPoint(x: 0, y: 0)
+    
+    if imageSize != targetSize {
+      let widthFactor = targetWidth / width
+      let heightFactor = targetHeight / height
+      
+      if widthFactor > heightFactor {
+        scaleFactor = widthFactor
+      } else {
+        scaleFactor = heightFactor
+      }
+      
+      scaledWidth  = width * scaleFactor
+      scaledHeight = height * scaleFactor
+      
+      if widthFactor > heightFactor {
+        thumbnailPoint.y = (targetHeight - scaledHeight) * 0.5
+      } else {
+        if widthFactor < heightFactor {
+          thumbnailPoint.x = (targetWidth - scaledWidth) * 0.5
+        }
+      }
+    }
+    
+    UIGraphicsBeginImageContext(targetSize)
+    
+    var thumbnailRect = CGRect.zero
+    thumbnailRect.origin = thumbnailPoint
+    thumbnailRect.size.width  = scaledWidth
+    thumbnailRect.size.height = scaledHeight
+    
+    draw(in: thumbnailRect)
+    
+    let newImage = UIGraphicsGetImageFromCurrentImageContext()
+    
+    UIGraphicsEndImageContext()
+    
+    return newImage
   }
 }

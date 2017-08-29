@@ -1,0 +1,11 @@
+use_frameworks!
+
+target 'SceneKitVideoRecorder_Example' do
+  pod 'SceneKitVideoRecorder', :path => '../'
+
+  target 'SceneKitVideoRecorder_Tests' do
+    inherit! :search_paths
+
+    
+  end
+end

@@ -8,6 +8,7 @@ import UIKit
 import SceneKit
 import ARKit
 import AVFoundation
+import Metal
 import CoreImage
 
 public class SceneKitVideoRecorder {

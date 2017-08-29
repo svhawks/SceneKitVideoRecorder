@@ -25,7 +25,7 @@ extension SceneKitVideoRecorder {
                      fps: 60,
                      outputUrl: URL(fileURLWithPath: NSTemporaryDirectory() + "output.mp4"),
                      fileType: AVFileTypeAppleM4V,
-                     codec: AVVideoCodecH264,
+                     codec: AVVideoCodec.h264,
                      deleteFileIfExists: true)
     }
     

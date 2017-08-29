@@ -92,6 +92,8 @@ It supports iOS10 or later on Metal supported devices.
   #  Not including the public_header_files will make all headers public.
   #
 
+  s.ios.deployment_target = '10.0'
+
   s.source_files  = "SceneKitVideoRecorder/Classes/**/*"
   s.exclude_files = "Classes/Exclude"
 

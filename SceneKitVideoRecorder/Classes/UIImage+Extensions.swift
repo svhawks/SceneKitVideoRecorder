@@ -1,7 +1,7 @@
 //
 //  UIImage+Extensions.swift
 //
-//  Created by Tomoya Hirano on 2017/08/10.
+//  Created by Omer Karisman on 2017/08/29.
 //
 
 import UIKit

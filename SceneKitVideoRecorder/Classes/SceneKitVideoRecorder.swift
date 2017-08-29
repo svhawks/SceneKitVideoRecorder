@@ -1,7 +1,7 @@
 //
 //  SceneKitVideoRecorder.swift
 //
-//  Created by Tomoya Hirano on 2017/07/31.
+//  Created by Omer Karisman on 2017/08/29.
 //
 
 import UIKit
@@ -65,8 +65,8 @@ public class SceneKitVideoRecorder {
   }
 
   public func startWriting() {
-    SCNVideoWriter.renderQueue.async { [weak self] in
-      SCNVideoWriter.renderSemaphore.wait()
+    SceneKitVideoRecorder.renderQueue.async { [weak self] in
+      SceneKitVideoRecorder.renderSemaphore.wait()
       self?.startDisplayLink()
       self?.startInputPipeline()
     }
@@ -78,7 +78,7 @@ public class SceneKitVideoRecorder {
     writer.finishWriting(completionHandler: { [weak self] in
       completionHandler(outputUrl)
       self?.stopDisplayLink()
-      SCNVideoWriter.renderSemaphore.signal()
+      SceneKitVideoRecorder.renderSemaphore.signal()
     })
   }
 

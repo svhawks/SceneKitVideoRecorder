@@ -7,7 +7,7 @@
 
 import UIKit
 
-extension SCNVideoWriter {
+extension SceneKitVideoRecorder {
   public struct VideoSizeError: Error {}
 }
 

@@ -1,6 +1,5 @@
 //
-//  SCNVideoWriter.swift
-//  Pods-SCNVideoWriter_Example
+//  SceneKitVideoRecorder.swift
 //
 //  Created by Tomoya Hirano on 2017/07/31.
 //
@@ -11,14 +10,14 @@ import ARKit
 import AVFoundation
 import CoreImage
 
-public class SCNVideoWriter {
+public class SceneKitVideoRecorder {
   private let writer: AVAssetWriter
   private let input: AVAssetWriterInput
   private let pixelBufferAdaptor: AVAssetWriterInputPixelBufferAdaptor
   private let options: Options
 
-  private let frameQueue = DispatchQueue(label: "com.noppelabs.SCNVideoWriter.frameQueue")
-  private static let renderQueue = DispatchQueue(label: "com.noppelabs.SCNVideoWriter.renderQueue")
+  private let frameQueue = DispatchQueue(label: "com.svtek.SceneKitVideoRecorder.frameQueue")
+  private static let renderQueue = DispatchQueue(label: "com.svtek.SceneKitVideoRecorder.renderQueue")
   private static let renderSemaphore = DispatchSemaphore(value: 3)
   private var displayLink: CADisplayLink? = nil
   private var initialTime: CFTimeInterval = 0.0

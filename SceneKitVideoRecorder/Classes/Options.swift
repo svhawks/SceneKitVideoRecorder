@@ -1,14 +1,13 @@
 //
 //  Options.swift
-//  Pods-SCNVideoWriter_Example
 //
-//  Created by Tomoya Hirano on 2017/08/20.
+//  Created by Omer Karisman on 2017/08/29.
 //
 
 import UIKit
 import AVFoundation
 
-extension SCNVideoWriter {
+extension SceneKitVideoRecorder {
   public struct Options {
     public var timeScale: Int32
     public var renderSize: CGSize

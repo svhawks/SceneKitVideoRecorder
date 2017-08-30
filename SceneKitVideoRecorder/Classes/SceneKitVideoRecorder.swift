@@ -4,6 +4,8 @@
 //  Created by Omer Karisman on 2017/08/29.
 //
 #if arch(i386) || arch(x86_64)
+  import UIKit
+
   public class SceneKitVideoRecorder {
     private let options: Options
     public init?(scene: SCNView, options: Options = .default) throws {

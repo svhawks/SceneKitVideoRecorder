@@ -3,6 +3,10 @@
 //
 //  Created by Omer Karisman on 2017/08/29.
 //
+#if arch(i386) || arch(x86_64)
+
+  //Metal does not work in simulator :(
+#else
 
 import UIKit
 import SceneKit
@@ -140,4 +144,7 @@ public class SceneKitVideoRecorder {
     displayLink = nil
   }
 }
+
+#endif
+
 

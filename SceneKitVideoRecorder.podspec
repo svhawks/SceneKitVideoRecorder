@@ -16,7 +16,7 @@ Pod::Spec.new do |s|
   #
 
   s.name         = "SceneKitVideoRecorder"
-  s.version      = "0.7.0"
+  s.version      = "0.6.0"
   s.summary      = "Record videos of SceneKit and ARKit"
 
   # This description is used to generate tags and improve search results.
@@ -120,6 +120,7 @@ It supports iOS10 or later on Metal supported devices.
   #  the lib prefix of their name.
   #
 
+  s.framework    = 'Metal', 'CoreGraphics', 'QuartzCore'
   # s.framework  = "SomeFramework"
   # s.frameworks = "SomeFramework", "AnotherFramework"
 

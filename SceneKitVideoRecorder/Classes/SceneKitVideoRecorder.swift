@@ -5,6 +5,9 @@
 //
 #if arch(i386) || arch(x86_64)
   public class SceneKitVideoRecorder {
+    private let options: Options
+    public init?(scene: SCNView, options: Options = .default) throws {
+    }
   }
   //Metal does not work in simulator :(
 #else

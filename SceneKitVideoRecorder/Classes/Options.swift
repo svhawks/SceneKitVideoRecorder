@@ -17,7 +17,7 @@ extension SceneKitVideoRecorder {
     public var fileType: String
     public var codec: String
     public var deleteFileIfExists: Bool
-    
+
     public static var `default`: Options {
       return Options(timeScale: 600,
                      renderSize: CGSize(width: 640, height: 640),
@@ -28,7 +28,7 @@ extension SceneKitVideoRecorder {
                      codec: AVVideoCodecH264,
                      deleteFileIfExists: true)
     }
-    
+
     var assetWriterInputSettings: [String : Any] {
       return [
         AVVideoCodecKey: codec,
@@ -38,7 +38,7 @@ extension SceneKitVideoRecorder {
     }
     var sourcePixelBufferAttributes: [String : Any] {
       return [
-        kCVPixelBufferPixelFormatTypeKey as String: NSNumber(value: kCVPixelFormatType_32ARGB),
+        kCVPixelBufferPixelFormatTypeKey as String: NSNumber(value: kCVPixelFormatType_32BGRA),
         kCVPixelBufferWidthKey as String: videoSize.width,
         kCVPixelBufferHeightKey as String: videoSize.height,
       ]

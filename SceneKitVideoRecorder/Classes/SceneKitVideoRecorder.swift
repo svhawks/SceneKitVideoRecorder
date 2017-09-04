@@ -25,7 +25,7 @@
     private let writer: AVAssetWriter
     private let input: AVAssetWriterInput
     private let pixelBufferAdaptor: AVAssetWriterInputPixelBufferAdaptor
-    private let options: Options
+    private var options: Options
 
     private let frameQueue = DispatchQueue(label: "com.svtek.SceneKitVideoRecorder.frameQueue")
     private static let renderQueue = DispatchQueue(label: "com.svtek.SceneKitVideoRecorder.renderQueue")
@@ -59,13 +59,19 @@
 
       self.options = options
 
-      self.writer = try AVAssetWriter(outputURL: options.outputUrl,
-                                      fileType: options.fileType)
+      let currentDrawable = metalLayer.nextDrawable()
+
+      self.options.videoSize = (currentDrawable?.layer.drawableSize)!
+
+      self.writer = try AVAssetWriter(outputURL: self.options.outputUrl,
+                                      fileType: self.options.fileType)
       self.input = AVAssetWriterInput(mediaType: AVMediaTypeVideo,
-                                      outputSettings: options.assetWriterInputSettings)
-      self.pixelBufferAdaptor = AVAssetWriterInputPixelBufferAdaptor(assetWriterInput: input,
-                                                                     sourcePixelBufferAttributes: options.sourcePixelBufferAttributes)
-      prepare(with: options)
+                                      outputSettings: self.options.assetWriterInputSettings)
+
+
+
+      self.pixelBufferAdaptor = AVAssetWriterInputPixelBufferAdaptor(assetWriterInput: input,sourcePixelBufferAttributes: self.options.sourcePixelBufferAttributes)
+      prepare(with: self.options)
     }
 
     private func prepare(with options: Options) {
@@ -94,6 +100,7 @@
     }
 
     private func startDisplayLink() {
+
       currentTime = 0.0
       initialTime = CFAbsoluteTimeGetCurrent()
       displayLink = CADisplayLink(target: self, selector: #selector(updateDisplayLink))
@@ -104,10 +111,7 @@
     @objc private func updateDisplayLink() {
       frameQueue.async { [weak self] in
         guard let input = self?.input, input.isReadyForMoreMediaData else { return }
-        guard let pool = self?.pixelBufferAdaptor.pixelBufferPool else { return }
-        guard let renderSize = self?.options.renderSize else { return }
-        guard let videoSize = self?.options.videoSize else { return }
-        self?.renderSnapshot(with: pool, renderSize: renderSize, videoSize: videoSize)
+        self?.renderSnapshot()
       }
     }
 
@@ -117,33 +121,28 @@
       input.requestMediaDataWhenReady(on: frameQueue, using: {})
     }
 
-    private func renderSnapshot(with pool: CVPixelBufferPool, renderSize: CGSize, videoSize: CGSize) {
+    private func renderSnapshot() {
       autoreleasepool {
 
-        let texture = metalLayer.nextDrawable()?.texture
-        let ciimage = CIImage(mtlTexture: texture!, options: nil)
-        let image = convert(ciImage: ciimage!)
+        guard let pool = self.pixelBufferAdaptor.pixelBufferPool else { return }
 
+        let (pixelBufferTemp, image) = PixelBufferFactory.make(with: metalLayer, usingBuffer: pool)
+        guard let pixelBuffer = pixelBufferTemp else { return }
         currentTime = CFAbsoluteTimeGetCurrent() - initialTime
 
         let actualFramesPerSecond = 1 / ((displayLink?.targetTimestamp)! - (displayLink?.timestamp)!)
-        //`guard let croppedImage = image.fill(at: videoSize) else { return }
-        guard let pixelBuffer = PixelBufferFactory.make(with: videoSize, from: image, usingBuffer: pool) else { return }
+
         let value: Int64 = Int64(currentTime * CFTimeInterval(options.timeScale))
         let presentationTime = CMTimeMake(value, options.timeScale)
+
         pixelBufferAdaptor.append(pixelBuffer, withPresentationTime: presentationTime)
         updateFrameHandler?(image, presentationTime)
+
       }
     }
 
-    func convert(ciImage:CIImage) -> UIImage
-    {
-      var flippedImage: CIImage = ciImage.applying(CGAffineTransform(scaleX: 1, y: -1))
-      flippedImage = flippedImage.applying(CGAffineTransform(translationX: 0, y: ciImage.extent.size.height))
-      let cgImage:CGImage = context.createCGImage(flippedImage, from: flippedImage.extent)!
-      let image:UIImage = UIImage.init(cgImage: cgImage)
-      return image
-    }
+
+
 
     private func stopDisplayLink() {
       displayLink?.invalidate()

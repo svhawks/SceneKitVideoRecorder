@@ -30,7 +30,7 @@
 
         let tempBuffer = CVPixelBufferGetBaseAddress(pixelBuffer)
         destinationTexture?.getBytes(tempBuffer!, bytesPerRow: Int(bytesPerRow), from: region, mipmapLevel: 0)
-        
+
         let image = imageFromCVPixelBuffer(buffer: pixelBuffer)
         CVPixelBufferUnlockBaseAddress(pixelBuffer, CVPixelBufferLockFlags.init(rawValue: 0))
         return (pixelBuffer, image)
@@ -50,4 +50,3 @@
 
   }
 #endif
-

@@ -3,7 +3,12 @@
 //
 //  Created by Omer Karisman on 2017/08/29.
 //
-
+#if arch(i386) || arch(x86_64)
+  import UIKit
+  struct PixelBufferFactory {
+  }
+  //Metal does not work in simulator :(
+#else
 import UIKit
 
 struct PixelBufferFactory {
@@ -42,4 +47,4 @@ struct PixelBufferFactory {
   }
 
 }
-
+#endif

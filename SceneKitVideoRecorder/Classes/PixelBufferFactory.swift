@@ -12,6 +12,9 @@
 import UIKit
 
 struct PixelBufferFactory {
+
+  static let context = CIContext(options: nil)
+
   static func make(with metalLayer: CAMetalLayer, usingBuffer pool: CVPixelBufferPool) -> (CVPixelBuffer?, UIImage) {
 
     let currentDrawable = metalLayer.nextDrawable()
@@ -38,7 +41,6 @@ struct PixelBufferFactory {
   static func imageFromCVPixelBuffer(buffer: CVPixelBuffer) -> UIImage {
 
     let ciimage = CIImage(cvPixelBuffer: buffer)
-    let context = CIContext(options: nil)
     let cgimgage = context.createCGImage(ciimage, from: CGRect(x: 0, y: 0, width: CVPixelBufferGetWidth(buffer), height: CVPixelBufferGetHeight(buffer)))
 
     let uiimage = UIImage(cgImage: cgimgage!)

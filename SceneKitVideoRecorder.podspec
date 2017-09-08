@@ -16,7 +16,7 @@ Pod::Spec.new do |s|
   #
 
   s.name         = "SceneKitVideoRecorder"
-  s.version      = "1.1.0"
+  s.version      = "1.2.0"
   s.summary      = "Record videos of SceneKit and ARKit"
 
   # This description is used to generate tags and improve search results.

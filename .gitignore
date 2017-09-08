@@ -31,3 +31,4 @@ Carthage
 # `pod install` in .travis.yml
 #
 Example/Pods/
+/SceneKitVideoRecorderDemo/Pods

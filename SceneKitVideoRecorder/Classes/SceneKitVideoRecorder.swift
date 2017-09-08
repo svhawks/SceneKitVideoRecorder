@@ -7,8 +7,8 @@
   import UIKit
   import SceneKit
   public class SceneKitVideoRecorder {
-    public init?(scene: SCNView, options: Options = .default) throws {}
-    public func startWriting() {}
+    public init(scene: SCNView, options: Options = .default) throws {}
+    public func startWriting() throws {}
     public func finishWriting(completionHandler: (@escaping (_ url: URL) -> Void)) {}
   }
   //Metal does not work in simulator :(
@@ -49,21 +49,25 @@
 
     private var audioSettings: [String : Any]?
 
+    private var prepared: Bool = false
     private var isRecording: Bool = false
     private var videoFramesWritten: Bool = false
+    private var waitingForPermissions: Bool = true
 
     public var updateFrameHandler: ((_ image: UIImage, _ time: CMTime) -> Void)? = nil
     private var finishedCompletionHandler: ((_ url: URL) -> Void)? = nil
     private let context:CIContext
 
     @available(iOS 11.0, *)
-    public convenience init?(withARSCNView view: ARSCNView, options: Options = .default) throws {
+    public convenience init(withARSCNView view: ARSCNView, options: Options = .default) throws {
       var options = options
       options.videoSize = CGSize(width: view.bounds.width * view.contentScaleFactor, height: view.bounds.height * view.contentScaleFactor)
       try self.init(scene: view, options: options)
     }
 
-    public init?(scene: SCNView, options: Options = .default) throws {
+    public init(scene: SCNView, options: Options = .default) throws {
+
+      if scene.renderingAPI != .metal { throw RenderingApiError() }
 
       self.sceneView = scene
 
@@ -81,15 +85,25 @@
       self.isRecording = false
       self.videoFramesWritten = false
 
-      //Handle mic permissions in a nice way.
-      //AVAudioSession.sharedInstance().requestRecordPermission()
-
       super.init()
 
-      self.setupAudio()
+      if(self.options.useMicrophone) {
+        AVAudioSession.sharedInstance().requestRecordPermission({ (granted) in
+          if granted {
+            self.setupAudio()
+          } else{
+            self.options.useMicrophone = false
+          }
+          self.waitingForPermissions = false
+        })
+      }else{
+        self.waitingForPermissions = false
+      }
     }
 
     public func prepare() {
+      while self.waitingForPermissions == true {}
+      prepared = true
       prepare(with: self.options)
     }
 
@@ -142,7 +156,10 @@
       self.pixelBufferAdaptor = AVAssetWriterInputPixelBufferAdaptor(assetWriterInput: videoInput,sourcePixelBufferAttributes: self.options.sourcePixelBufferAttributes)
 
       writer.add(videoInput)
-      writer.add(audioInput)
+      
+      if(self.options.useMicrophone) {
+        writer.add(audioInput)
+      }
     }
 
     public func cleanUp() {
@@ -151,7 +168,8 @@
       }
     }
 
-    public func startWriting() {
+    public func startWriting() throws {
+      guard prepared else { throw PreparationError() }
       cleanUp()
       SceneKitVideoRecorder.renderQueue.async { [weak self] in
         SceneKitVideoRecorder.renderSemaphore.wait()
@@ -167,7 +185,11 @@
       videoInput.markAsFinished()
       audioInput.markAsFinished()
       self.stopDisplayLink()
+
       self.isRecording = false
+      self.prepared = false
+      self.videoFramesWritten = false
+
       writer.finishWriting(completionHandler: { _ in
         completionHandler(outputUrl)
         self.prepare(with: self.options)
@@ -208,20 +230,24 @@
           currentDrawable = metalLayer.nextDrawable()
         }
 
-
         SceneKitVideoRecorder.frameRenderSemaphore.wait()
-
 
         guard let pool = self.pixelBufferAdaptor.pixelBufferPool else { return }
 
         let (pixelBufferTemp, image) = PixelBufferFactory.make(with: currentDrawable!, usingBuffer: pool)
         currentDrawable = nil
         guard let pixelBuffer = pixelBufferTemp else { return }
-        currentTime = CFAbsoluteTimeGetCurrent() - initialTime
 
-        let millisElapsed = NSDate().timeIntervalSince(audioCaptureStartedAt! as Date) * Double(options.timeScale)
-        
-        let presentationTime = CMTimeAdd(firstAudioTimestamp!, CMTimeMake(Int64(millisElapsed), Int32(options.timeScale)))
+        var presentationTime: CMTime
+
+        if(self.options.useMicrophone){
+          let millisElapsed = NSDate().timeIntervalSince(audioCaptureStartedAt! as Date) * Double(options.timeScale)
+          presentationTime = CMTimeAdd(firstAudioTimestamp!, CMTimeMake(Int64(millisElapsed), Int32(options.timeScale)))
+        }else{
+          currentTime = CFAbsoluteTimeGetCurrent() - initialTime
+          let value: Int64 = Int64(currentTime * CFTimeInterval(options.timeScale))
+          presentationTime = CMTimeMake(value, options.timeScale)
+        }
 
         SceneKitVideoRecorder.bufferAppendSemaphore.wait()
         bufferQueue.async { [weak self] in
@@ -232,6 +258,7 @@
         updateFrameHandler?(image, presentationTime)
       }
       SceneKitVideoRecorder.frameRenderSemaphore.signal()
+
     }
 
     private var audioCaptureStartedAt: NSDate?

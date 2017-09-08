@@ -52,9 +52,8 @@ class ViewController: UIViewController, ARSCNViewDelegate {
   }
 
   @IBAction func startRecording (sender: UIButton) {
-    //Initialize recorder just before recording. This way we can make sure everything sized properly.
     sender.backgroundColor = .red
-    self.recorder?.startWriting()
+    try! self.recorder?.startWriting()
   }
 
   @IBAction func stopRecording (sender: UIButton) {

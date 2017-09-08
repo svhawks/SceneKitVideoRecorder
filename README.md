@@ -21,6 +21,11 @@ pod "SceneKitVideoRecorder"
 
 ## Usage
 
+Add `NSMicrophoneUsageDescription` to `info.plist`
+
+
+Add below code to your view controller
+
 ```
 var recorder: SceneKitVideoRecorder?
 

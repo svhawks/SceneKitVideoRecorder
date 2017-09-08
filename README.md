@@ -22,11 +22,22 @@ pod "SceneKitVideoRecorder"
 ## Usage
 
 ```
-let writer = try! SceneKitVideoRecorder(scene: sceneView.scene)
-writer.startWriting()
-writer.finishWriting(completionHandler: { [weak self] (url) in
-  print("done", url)
-})
+@IBAction func startRecording (sender: UIButton) {
+  //Initialize recorder just before recording. This way we can make sure everything sized properly.
+  if recorder == nil {
+    recorder = try! SceneKitVideoRecorder(withARSCNView: sceneView)
+  }
+  sender.backgroundColor = .red
+  self.recorder?.startWriting()
+}
+
+@IBAction func stopRecording (sender: UIButton) {
+  sender.backgroundColor = .white
+  self.recorder?.finishWriting(completionHandler: { [weak self] (url) in
+    print("Recording Finished", url)
+    self?.checkAuthorizationAndPresentActivityController(toShare: url, using: self!)
+  })
+}
 ```
 
 ## Author

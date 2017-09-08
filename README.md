@@ -22,11 +22,21 @@ pod "SceneKitVideoRecorder"
 ## Usage
 
 ```
+var recorder: SceneKitVideoRecorder?
+
+override func viewDidLoad() {
+  super.viewDidLoad()
+  ...
+  recorder = try! SceneKitVideoRecorder(withARSCNView: sceneView)
+}
+
+override func viewDidAppear(_ animated: Bool) {
+  super.viewDidAppear(animated)
+  ...
+  self.recorder?.prepare()
+}
+
 @IBAction func startRecording (sender: UIButton) {
-  //Initialize recorder just before recording. This way we can make sure everything sized properly.
-  if recorder == nil {
-    recorder = try! SceneKitVideoRecorder(withARSCNView: sceneView)
-  }
   sender.backgroundColor = .red
   self.recorder?.startWriting()
 }

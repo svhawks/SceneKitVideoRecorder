@@ -22,6 +22,8 @@
 	<true/>
 	<key>NSCameraUsageDescription</key>
 	<string>This application will use the camera for Augmented Reality.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Record audio with video</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Save recorded video.</string>
 	<key>UILaunchStoryboardName</key>

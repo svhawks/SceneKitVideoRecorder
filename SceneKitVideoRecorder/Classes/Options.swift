@@ -18,7 +18,7 @@ extension SceneKitVideoRecorder {
     public var deleteFileIfExists: Bool
     
     public static var `default`: Options {
-      return Options(timeScale: 600,
+      return Options(timeScale: 1000,
                      videoSize: CGSize(width: 1280, height: 720),
                      fps: 60,
                      outputUrl: URL(fileURLWithPath: NSTemporaryDirectory() + "output.mp4"),
@@ -27,13 +27,18 @@ extension SceneKitVideoRecorder {
                      deleteFileIfExists: true)
     }
     
-    var assetWriterInputSettings: [String : Any] {
+    var assetWriterVideoInputSettings: [String : Any] {
       return [
         AVVideoCodecKey: codec,
         AVVideoWidthKey: videoSize.width,
         AVVideoHeightKey: videoSize.height
       ]
     }
+    
+    var assetWriterAudioInputSettings: [String : Any] {
+      return [:]
+    }
+    
     var sourcePixelBufferAttributes: [String : Any] {
       return [
         kCVPixelBufferPixelFormatTypeKey as String: NSNumber(value: kCVPixelFormatType_32BGRA),

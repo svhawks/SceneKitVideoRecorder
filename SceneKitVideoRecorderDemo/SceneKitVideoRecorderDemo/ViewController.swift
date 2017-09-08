@@ -32,6 +32,8 @@ class ViewController: UIViewController, ARSCNViewDelegate {
 
     // Set the scene to the view
     sceneView.scene = scene
+
+    recorder = try! SceneKitVideoRecorder(withARSCNView: sceneView)
   }
 
   override func viewWillAppear(_ animated: Bool) {
@@ -44,11 +46,13 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     sceneView.session.run(configuration)
   }
 
+  override func viewDidAppear(_ animated: Bool) {
+    super.viewDidAppear(animated)
+    self.recorder?.prepare()
+  }
+
   @IBAction func startRecording (sender: UIButton) {
     //Initialize recorder just before recording. This way we can make sure everything sized properly.
-    if recorder == nil {
-      recorder = try! SceneKitVideoRecorder(withARSCNView: sceneView)
-    }
     sender.backgroundColor = .red
     self.recorder?.startWriting()
   }

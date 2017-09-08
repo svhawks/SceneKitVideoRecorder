@@ -33,6 +33,7 @@ override func viewDidLoad() {
 override func viewDidAppear(_ animated: Bool) {
   super.viewDidAppear(animated)
   ...
+  //Prepare the recorder after sceneView is displayed on screen to get correct video size. 
   self.recorder?.prepare()
 }
 

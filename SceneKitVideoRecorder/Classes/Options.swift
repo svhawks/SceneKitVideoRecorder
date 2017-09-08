@@ -10,17 +10,15 @@ import AVFoundation
 extension SceneKitVideoRecorder {
   public struct Options {
     public var timeScale: Int32
-    public var renderSize: CGSize
     public var videoSize: CGSize
     public var fps: Int
     public var outputUrl: URL
     public var fileType: String
     public var codec: String
     public var deleteFileIfExists: Bool
-
+    
     public static var `default`: Options {
       return Options(timeScale: 600,
-                     renderSize: CGSize(width: 640, height: 640),
                      videoSize: CGSize(width: 1280, height: 720),
                      fps: 60,
                      outputUrl: URL(fileURLWithPath: NSTemporaryDirectory() + "output.mp4"),
@@ -28,7 +26,7 @@ extension SceneKitVideoRecorder {
                      codec: AVVideoCodecH264,
                      deleteFileIfExists: true)
     }
-
+    
     var assetWriterInputSettings: [String : Any] {
       return [
         AVVideoCodecKey: codec,

@@ -15,21 +15,20 @@
 
     static let context = CIContext(mtlDevice: MTLCreateSystemDefaultDevice()!)
 
-    static func make(with metalLayer: CAMetalLayer, usingBuffer pool: CVPixelBufferPool) -> (CVPixelBuffer?, UIImage) {
+    static func make(with currentDrawable: CAMetalDrawable, usingBuffer pool: CVPixelBufferPool) -> (CVPixelBuffer?, UIImage) {
 
-      let currentDrawable = metalLayer.nextDrawable()
-      let destinationTexture = currentDrawable?.texture
+      let destinationTexture = currentDrawable.texture
 
       var pixelBuffer: CVPixelBuffer?
-      let status = CVPixelBufferPoolCreatePixelBuffer(kCFAllocatorDefault, pool, &pixelBuffer)
+      _ = CVPixelBufferPoolCreatePixelBuffer(kCFAllocatorDefault, pool, &pixelBuffer)
       if let pixelBuffer = pixelBuffer {
         CVPixelBufferLockBaseAddress(pixelBuffer, CVPixelBufferLockFlags.init(rawValue: 0))
-        let region = MTLRegionMake2D(0, 0, Int((currentDrawable?.layer.drawableSize.width)!), Int((currentDrawable?.layer.drawableSize.height)!))
-
+        let region = MTLRegionMake2D(0, 0, Int(currentDrawable.layer.drawableSize.width), Int(currentDrawable.layer.drawableSize.height))
+        print(currentDrawable.layer.drawableSize)
         let bytesPerRow = CVPixelBufferGetBytesPerRow(pixelBuffer)
 
         let tempBuffer = CVPixelBufferGetBaseAddress(pixelBuffer)
-        destinationTexture?.getBytes(tempBuffer!, bytesPerRow: Int(bytesPerRow), from: region, mipmapLevel: 0)
+        destinationTexture.getBytes(tempBuffer!, bytesPerRow: Int(bytesPerRow), from: region, mipmapLevel: 0)
 
         let image = imageFromCVPixelBuffer(buffer: pixelBuffer)
         CVPixelBufferUnlockBaseAddress(pixelBuffer, CVPixelBufferLockFlags.init(rawValue: 0))

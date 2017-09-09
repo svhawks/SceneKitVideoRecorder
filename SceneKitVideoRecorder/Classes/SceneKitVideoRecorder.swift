@@ -175,10 +175,11 @@
       cleanUp()
       SceneKitVideoRecorder.renderQueue.async { [weak self] in
         SceneKitVideoRecorder.renderSemaphore.wait()
-
-        self?.startDisplayLink()
         self?.startInputPipeline()
-        self?.isRecording = self?.writer.status == AVAssetWriterStatus.writing
+
+        while self?.writer.status != .writing {}
+        self?.startDisplayLink()
+        self?.isRecording = true
       }
     }
 
@@ -192,9 +193,9 @@
       self.prepared = false
       self.videoFramesWritten = false
 
-      writer.finishWriting(completionHandler: { _ in
+      writer.finishWriting(completionHandler: { [weak self] in
         completionHandler(outputUrl)
-        self.prepare(with: self.options)
+        self?.prepare()
         SceneKitVideoRecorder.renderSemaphore.signal()
       })
     }

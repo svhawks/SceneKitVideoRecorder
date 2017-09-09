@@ -46,11 +46,6 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     sceneView.session.run(configuration)
   }
 
-  override func viewDidAppear(_ animated: Bool) {
-    super.viewDidAppear(animated)
-    self.recorder?.prepare()
-  }
-
   @IBAction func startRecording (sender: UIButton) {
     sender.backgroundColor = .red
     try! self.recorder?.startWriting()

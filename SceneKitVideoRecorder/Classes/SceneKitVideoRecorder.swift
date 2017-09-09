@@ -78,10 +78,6 @@
 
       self.options = options
 
-      let currentDrawable = metalLayer.nextDrawable()
-
-      self.options.videoSize = (currentDrawable?.layer.drawableSize)!
-
       self.isRecording = false
       self.videoFramesWritten = false
 
@@ -99,16 +95,23 @@
       }else{
         self.waitingForPermissions = false
       }
+      metalLayer.addObserver(self, forKeyPath: "bounds", options: .new, context: nil)
+
     }
+
+    public override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
+      prepare()
+    }
+
 
     public func prepare() {
       while self.waitingForPermissions == true {}
       prepared = true
-      prepare(with: self.options)
+      self.prepare(with: self.options)
     }
 
     private func setupAudio () {
-      
+
       let device: AVCaptureDevice = AVCaptureDevice.defaultDevice(withMediaType: AVMediaTypeAudio)
       if (device.isConnected) {
         //print("Connected Device: %@", device.localizedName);
@@ -142,9 +145,8 @@
     }
 
     private func prepare(with options: Options) {
-      let currentDrawable = metalLayer.nextDrawable()
 
-      self.options.videoSize = (currentDrawable?.layer.drawableSize)!
+      self.options.videoSize = CGSize(width: metalLayer.bounds.size.width * UIScreen.main.scale, height: metalLayer.bounds.size.height * UIScreen.main.scale)
 
       self.writer = try! AVAssetWriter(outputURL: self.options.outputUrl,
                                        fileType: self.options.fileType)
@@ -278,6 +280,10 @@
     private func stopDisplayLink() {
       displayLink?.invalidate()
       displayLink = nil
+    }
+
+    deinit {
+      metalLayer.removeObserver(self, forKeyPath: "bounds")
     }
   }
 

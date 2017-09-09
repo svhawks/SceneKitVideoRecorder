@@ -226,7 +226,10 @@
 
     private func renderSnapshot() {
       if !videoInput.isReadyForMoreMediaData { return }
-
+      if writer.status == .unknown { return }
+      if writer.status == .failed {
+        self.prepare()
+      }
       autoreleasepool {
 
         while (currentDrawable == nil) {

@@ -35,13 +35,6 @@ override func viewDidLoad() {
   recorder = try! SceneKitVideoRecorder(withARSCNView: sceneView)
 }
 
-override func viewDidAppear(_ animated: Bool) {
-  super.viewDidAppear(animated)
-  ...
-  //Prepare the recorder after sceneView is displayed on screen to get correct video size. 
-  self.recorder?.prepare()
-}
-
 @IBAction func startRecording (sender: UIButton) {
   sender.backgroundColor = .red
   self.recorder?.startWriting()

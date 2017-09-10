@@ -49,6 +49,20 @@ override func viewDidLoad() {
 }
 ```
 
+## Performance tips
+
+Here is a piece of Apple sample code
+
+```
+ if let camera = sceneView.pointOfView?.camera {
+  camera.wantsHDR = true
+  camera.wantsExposureAdaptation = true
+  camera.exposureOffset = -1
+  camera.minimumExposure = -1
+}
+```
+The line ```camera.wantsHDR = true``` causes a huge drop in video recording performance. You should remove or disable it out for video recording.
+
 ## Author
 okaris, ok@okaris.com
 

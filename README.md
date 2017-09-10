@@ -64,7 +64,25 @@ Here is a piece of Apple sample code
 The line ```camera.wantsHDR = true``` causes a huge drop in video recording performance. You should remove or disable it out for video recording.
 
 ## Author
-okaris, ok@okaris.com
+[<img src="https://avatars1.githubusercontent.com/u/1448702?v=4" width="100px;"/><br /><sub>Omer Karisman</sub>](http://okaris.com)<br/>
+ok (at) okaris.com
+
+Follow me on:
+[![alt text][1.1]][1]
+
+Check out my designs:
+[![alt text][2.1]][2]
+
+Checkout my GitHub profile:
+[![alt text][3.1]][3]
+
+[1.1]: http://i.imgur.com/wWzX9uB.png (twitter icon without padding)
+[2.1]: http://i.imgur.com/Vvy3Kru.png (dribbble icon without padding)
+[3.1]: http://i.imgur.com/9I6NRUm.png (github icon without padding)
+
+[1]: http://www.twitter.com/okarisman
+[2]: http://dribbble.com/okaris
+[3]: http://www.github.com/okaris
 
 ## Inspired from
 noppefoxwolf, noppelabs@gmail.com

@@ -52,7 +52,7 @@
     private var prepared: Bool = false
     private var isRecording: Bool = false
     private var videoFramesWritten: Bool = false
-    private var waitingForPermissions: Bool = true
+    private var waitingForPermissions: Bool = false
 
     public var updateFrameHandler: ((_ image: UIImage, _ time: CMTime) -> Void)? = nil
     private var finishedCompletionHandler: ((_ url: URL) -> Void)? = nil
@@ -83,20 +83,11 @@
 
       super.init()
 
-      if(self.options.useMicrophone) {
-        AVAudioSession.sharedInstance().requestRecordPermission({ (granted) in
-          if granted {
-            self.setupAudio()
-          } else{
-            self.options.useMicrophone = false
-          }
-          self.waitingForPermissions = false
-        })
-      }else{
-        self.waitingForPermissions = false
-      }
       metalLayer.addObserver(self, forKeyPath: "bounds", options: .new, context: nil)
 
+      if AVAudioSession.sharedInstance().recordPermission() != .granted {
+        self.options.useMicrophone = false
+      }
     }
 
     public override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
@@ -104,8 +95,20 @@
     }
 
 
+    public func setupMicrophone() {
+      self.waitingForPermissions = true
+      AVAudioSession.sharedInstance().requestRecordPermission({ (granted) in
+        if granted {
+          self.prepare()
+          self.options.useMicrophone = true
+        } else{
+          self.options.useMicrophone = false
+        }
+        self.waitingForPermissions = false
+      })
+    }
+
     public func prepare() {
-      while self.waitingForPermissions == true {}
       prepared = true
       self.prepare(with: self.options)
     }
@@ -142,14 +145,10 @@
       audioQueue.async { [weak self] in
         self?.captureSession.startRunning()
       }
+      writer.add(audioInput)
     }
 
-    private func prepare(with options: Options) {
-
-      self.options.videoSize = CGSize(width: metalLayer.bounds.size.width * UIScreen.main.scale, height: metalLayer.bounds.size.height * UIScreen.main.scale)
-
-      self.writer = try! AVAssetWriter(outputURL: self.options.outputUrl,
-                                       fileType: self.options.fileType)
+    func setupVideo() {
       self.videoInput = AVAssetWriterInput(mediaType: AVMediaTypeVideo,
                                            outputSettings: self.options.assetWriterVideoInputSettings)
 
@@ -158,9 +157,17 @@
       self.pixelBufferAdaptor = AVAssetWriterInputPixelBufferAdaptor(assetWriterInput: videoInput,sourcePixelBufferAttributes: self.options.sourcePixelBufferAttributes)
 
       writer.add(videoInput)
-      
-      if(self.options.useMicrophone) {
-        writer.add(audioInput)
+    }
+
+    private func prepare(with options: Options) {
+
+      self.options.videoSize = CGSize(width: metalLayer.bounds.size.width * UIScreen.main.scale, height: metalLayer.bounds.size.height * UIScreen.main.scale)
+
+      writer = try! AVAssetWriter(outputURL: self.options.outputUrl,
+                                       fileType: self.options.fileType)
+      setupVideo()
+      if options.useMicrophone && AVAudioSession.sharedInstance().recordPermission() == .granted {
+        setupAudio()
       }
     }
 
@@ -171,8 +178,11 @@
     }
 
     public func startWriting() throws {
+      if waitingForPermissions { return }
+
       guard prepared else { throw PreparationError() }
       cleanUp()
+      
       SceneKitVideoRecorder.renderQueue.async { [weak self] in
         SceneKitVideoRecorder.renderSemaphore.wait()
         self?.startInputPipeline()
@@ -184,9 +194,13 @@
     }
 
     public func finishWriting(completionHandler: (@escaping (_ url: URL) -> Void)) {
+      if !isRecording { return }
+
       let outputUrl = options.outputUrl
       videoInput.markAsFinished()
-      audioInput.markAsFinished()
+      if self.options.useMicrophone {
+        audioInput.markAsFinished()
+      }
       self.stopDisplayLink()
 
       self.isRecording = false
@@ -218,9 +232,13 @@
     }
 
     private func startInputPipeline() {
-      let millisElapsed = NSDate().timeIntervalSince(audioCaptureStartedAt! as Date) * Double(options.timeScale)
       writer.startWriting()
+      if self.options.useMicrophone {
+      let millisElapsed = NSDate().timeIntervalSince(audioCaptureStartedAt! as Date) * Double(options.timeScale)
       writer.startSession(atSourceTime: CMTimeAdd(firstAudioTimestamp!, CMTimeMake(Int64(millisElapsed), Int32(options.timeScale))))
+      }else{
+        writer.startSession(atSourceTime: kCMTimeZero)
+      }
       videoInput.requestMediaDataWhenReady(on: frameQueue, using: {})
     }
 

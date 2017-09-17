@@ -17,16 +17,26 @@
     
     static func make(with currentDrawable: CAMetalDrawable, usingBuffer pool: CVPixelBufferPool) -> (CVPixelBuffer?, UIImage) {
       
-      let destinationTexture = currentDrawable.texture
-      
+      var destinationTexture = currentDrawable.texture.makeTextureView(pixelFormat: .bgra8Unorm)
+      switch destinationTexture.pixelFormat {
+        case .bgra8Unorm:
+          break
+        case .bgra8Unorm_srgb:
+          break
+        case .rgba16Float:
+          break
+        default:
+          destinationTexture = destinationTexture.makeTextureView(pixelFormat: .bgra8Unorm)
+      }
+
       var pixelBuffer: CVPixelBuffer?
       _ = CVPixelBufferPoolCreatePixelBuffer(kCFAllocatorDefault, pool, &pixelBuffer)
       if let pixelBuffer = pixelBuffer {
         CVPixelBufferLockBaseAddress(pixelBuffer, CVPixelBufferLockFlags.init(rawValue: 0))
         let region = MTLRegionMake2D(0, 0, Int(currentDrawable.layer.drawableSize.width), Int(currentDrawable.layer.drawableSize.height))
-        
+
         let bytesPerRow = CVPixelBufferGetBytesPerRow(pixelBuffer)
-        
+
         let tempBuffer = CVPixelBufferGetBaseAddress(pixelBuffer)
         destinationTexture.getBytes(tempBuffer!, bytesPerRow: Int(bytesPerRow), from: region, mipmapLevel: 0)
         

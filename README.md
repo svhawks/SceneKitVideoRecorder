@@ -39,7 +39,7 @@ override func viewDidLoad() {
   sender.backgroundColor = .red
   //If you want to use the microphone you have to set it up before startWriting. You can do it here or earlier
   self.recorder?.setupMicrophone()
-  try! self.recorder?.startWriting()
+  self.recorder?.startWriting()
 }
 
 @IBAction func stopRecording (sender: UIButton) {

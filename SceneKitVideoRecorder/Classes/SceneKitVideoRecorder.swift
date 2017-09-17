@@ -8,7 +8,7 @@
   import SceneKit
   public class SceneKitVideoRecorder {
     public init(scene: SCNView, options: Options = .default) throws {}
-    public func startWriting() throws {}
+    public func startWriting() {}
     public func finishWriting(completionHandler: (@escaping (_ url: URL) -> Void)) {}
   }
   //Metal does not work in simulator :(
@@ -164,7 +164,7 @@
       self.options.videoSize = CGSize(width: metalLayer.bounds.size.width * UIScreen.main.scale, height: metalLayer.bounds.size.height * UIScreen.main.scale)
 
       writer = try! AVAssetWriter(outputURL: self.options.outputUrl,
-                                       fileType: self.options.fileType)
+                                  fileType: self.options.fileType)
       setupVideo()
       if options.useMicrophone && AVAudioSession.sharedInstance().recordPermission() == .granted {
         setupAudio()
@@ -177,10 +177,14 @@
       }
     }
 
-    public func startWriting() throws {
+    public func startWriting() {
       if waitingForPermissions { return }
 
-      guard prepared else { throw PreparationError() }
+      if !prepared {
+        self.prepare()
+      }
+      while !prepared {}
+
       cleanUp()
       
       SceneKitVideoRecorder.renderQueue.async { [weak self] in
@@ -234,8 +238,8 @@
     private func startInputPipeline() {
       writer.startWriting()
       if self.options.useMicrophone {
-      let millisElapsed = NSDate().timeIntervalSince(audioCaptureStartedAt! as Date) * Double(options.timeScale)
-      writer.startSession(atSourceTime: CMTimeAdd(firstAudioTimestamp!, CMTimeMake(Int64(millisElapsed), Int32(options.timeScale))))
+        let millisElapsed = NSDate().timeIntervalSince(audioCaptureStartedAt! as Date) * Double(options.timeScale)
+        writer.startSession(atSourceTime: CMTimeAdd(firstAudioTimestamp!, CMTimeMake(Int64(millisElapsed), Int32(options.timeScale))))
       }else{
         writer.startSession(atSourceTime: kCMTimeZero)
       }

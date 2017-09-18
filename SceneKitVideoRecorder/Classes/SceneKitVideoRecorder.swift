@@ -96,30 +96,32 @@
 
 
     public func setupMicrophone() {
+
       self.waitingForPermissions = true
       AVAudioSession.sharedInstance().requestRecordPermission({ (granted) in
         if granted {
-          self.prepare()
+          self.setupAudio()
           self.options.useMicrophone = true
         } else{
           self.options.useMicrophone = false
         }
         self.waitingForPermissions = false
       })
+
     }
 
     public func prepare() {
+
       prepared = true
       self.prepare(with: self.options)
+
     }
 
     private func setupAudio () {
 
       let device: AVCaptureDevice = AVCaptureDevice.defaultDevice(withMediaType: AVMediaTypeAudio)
-      if (device.isConnected) {
-        //print("Connected Device: %@", device.localizedName);
-      } else {
-        //print("AVCaptureDevice Failed");
+      guard device.isConnected else {
+        self.options.useMicrophone = false
         return
       }
 
@@ -146,9 +148,11 @@
         self?.captureSession.startRunning()
       }
       writer.add(audioInput)
+
     }
 
     func setupVideo() {
+
       self.videoInput = AVAssetWriterInput(mediaType: AVMediaTypeVideo,
                                            outputSettings: self.options.assetWriterVideoInputSettings)
 
@@ -157,6 +161,7 @@
       self.pixelBufferAdaptor = AVAssetWriterInputPixelBufferAdaptor(assetWriterInput: videoInput,sourcePixelBufferAttributes: self.options.sourcePixelBufferAttributes)
 
       writer.add(videoInput)
+
     }
 
     private func prepare(with options: Options) {
@@ -166,18 +171,19 @@
       writer = try! AVAssetWriter(outputURL: self.options.outputUrl,
                                   fileType: self.options.fileType)
       setupVideo()
-      if options.useMicrophone && AVAudioSession.sharedInstance().recordPermission() == .granted {
-        setupAudio()
-      }
+
     }
 
     public func cleanUp() {
+
       if options.deleteFileIfExists {
         FileController.delete(file: options.outputUrl)
       }
+
     }
 
     public func startWriting() {
+
       if waitingForPermissions { return }
 
       if !prepared {
@@ -195,9 +201,11 @@
         self?.startDisplayLink()
         self?.isRecording = true
       }
+
     }
 
     public func finishWriting(completionHandler: (@escaping (_ url: URL) -> Void)) {
+
       if !isRecording { return }
 
       let outputUrl = options.outputUrl
@@ -216,6 +224,7 @@
         self?.prepare()
         SceneKitVideoRecorder.renderSemaphore.signal()
       })
+
     }
 
     private func startDisplayLink() {
@@ -229,24 +238,30 @@
     }
 
     @objc private func updateDisplayLink() {
+
       frameQueue.async { [weak self] in
         guard let input = self?.videoInput, input.isReadyForMoreMediaData else { return }
         self?.renderSnapshot()
       }
+
     }
 
     private func startInputPipeline() {
+
       writer.startWriting()
-      if self.options.useMicrophone {
+      if self.options.useMicrophone && AVAudioSession.sharedInstance().recordPermission() == .granted {
+        while audioCaptureStartedAt == nil && firstAudioTimestamp == nil {}
         let millisElapsed = NSDate().timeIntervalSince(audioCaptureStartedAt! as Date) * Double(options.timeScale)
         writer.startSession(atSourceTime: CMTimeAdd(firstAudioTimestamp!, CMTimeMake(Int64(millisElapsed), Int32(options.timeScale))))
       }else{
         writer.startSession(atSourceTime: kCMTimeZero)
       }
       videoInput.requestMediaDataWhenReady(on: frameQueue, using: {})
+
     }
 
     private func renderSnapshot() {
+
       if !videoInput.isReadyForMoreMediaData { return }
       if writer.status == .unknown { return }
       if writer.status == .failed {
@@ -293,6 +308,7 @@
     private var firstAudioTimestamp: CMTime?
 
     public func captureOutput(_ output: AVCaptureOutput!, didOutputSampleBuffer sampleBuffer: CMSampleBuffer!, from connection: AVCaptureConnection!) {
+
       if(audioCaptureStartedAt == nil) {
         audioCaptureStartedAt = NSDate()
         firstAudioTimestamp = CMSampleBufferGetPresentationTimeStamp(sampleBuffer)
@@ -300,17 +316,23 @@
       if(audioInput.isReadyForMoreMediaData && isRecording && videoFramesWritten){
         audioInput.append(sampleBuffer)
       }
+
     }
 
 
     private func stopDisplayLink() {
+
       displayLink?.invalidate()
       displayLink = nil
+
     }
 
     deinit {
+
       metalLayer.removeObserver(self, forKeyPath: "bounds")
+
     }
+    
   }
 
 #endif

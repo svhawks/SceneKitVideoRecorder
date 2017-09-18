@@ -54,7 +54,7 @@
     private var videoFramesWritten: Bool = false
     private var waitingForPermissions: Bool = false
 
-    public var updateFrameHandler: ((_ image: UIImage, _ time: CMTime) -> Void)? = nil
+    //public var updateFrameHandler: ((_ image: UIImage, _ time: CMTime) -> Void)? = nil
     private var finishedCompletionHandler: ((_ url: URL) -> Void)? = nil
     private let context:CIContext
 
@@ -277,7 +277,7 @@
 
         guard let pool = self.pixelBufferAdaptor.pixelBufferPool else { return }
 
-        let (pixelBufferTemp, image) = PixelBufferFactory.make(with: currentDrawable!, usingBuffer: pool)
+        let pixelBufferTemp = PixelBufferFactory.make(with: currentDrawable!, usingBuffer: pool)
         currentDrawable = nil
         guard let pixelBuffer = pixelBufferTemp else { return }
 
@@ -298,7 +298,6 @@
           self?.pixelBufferAdaptor.append(pixelBuffer, withPresentationTime: presentationTime)
           SceneKitVideoRecorder.bufferAppendSemaphore.signal()
         }
-        updateFrameHandler?(image, presentationTime)
       }
       SceneKitVideoRecorder.frameRenderSemaphore.signal()
 

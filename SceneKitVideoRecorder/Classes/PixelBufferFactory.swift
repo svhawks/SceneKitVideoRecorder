@@ -15,7 +15,7 @@
     
     static let context = CIContext(mtlDevice: MTLCreateSystemDefaultDevice()!)
     
-    static func make(with currentDrawable: CAMetalDrawable, usingBuffer pool: CVPixelBufferPool) -> (CVPixelBuffer?, UIImage) {
+    static func make(with currentDrawable: CAMetalDrawable, usingBuffer pool: CVPixelBufferPool) -> CVPixelBuffer? {
       
       var destinationTexture = currentDrawable.texture.makeTextureView(pixelFormat: .bgra8Unorm)
       switch destinationTexture.pixelFormat {
@@ -40,11 +40,10 @@
         let tempBuffer = CVPixelBufferGetBaseAddress(pixelBuffer)
         destinationTexture.getBytes(tempBuffer!, bytesPerRow: Int(bytesPerRow), from: region, mipmapLevel: 0)
         
-        let image = imageFromCVPixelBuffer(buffer: pixelBuffer)
         CVPixelBufferUnlockBaseAddress(pixelBuffer, CVPixelBufferLockFlags.init(rawValue: 0))
-        return (pixelBuffer, image)
+        return pixelBuffer
       }
-      return (nil, UIImage())
+      return nil
     }
     
     static func imageFromCVPixelBuffer(buffer: CVPixelBuffer) -> UIImage {

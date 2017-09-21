@@ -43,7 +43,7 @@ extension SceneKitVideoRecorder {
     
     var sourcePixelBufferAttributes: [String : Any] {
       return [
-        kCVPixelBufferPixelFormatTypeKey as String: NSNumber(value: kCVPixelFormatType_32BGRA),
+        kCVPixelBufferPixelFormatTypeKey as String: NSNumber(value: kCVPixelFormatType_32ARGB),
         kCVPixelBufferWidthKey as String: videoSize.width,
         kCVPixelBufferHeightKey as String: videoSize.height,
       ]

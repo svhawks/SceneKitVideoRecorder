@@ -18,7 +18,6 @@
   import SceneKit
   import ARKit
   import AVFoundation
-  import Metal
   import CoreImage
 
   public class SceneKitVideoRecorder: NSObject, AVCaptureAudioDataOutputSampleBufferDelegate {
@@ -29,7 +28,6 @@
 
     private var pixelBufferAdaptor: AVAssetWriterInputPixelBufferAdaptor!
     private var options: Options
-    private var currentDrawable: CAMetalDrawable?
 
     private let frameQueue = DispatchQueue(label: "com.svtek.SceneKitVideoRecorder.frameQueue")
     private static let renderQueue = DispatchQueue(label: "com.svtek.SceneKitVideoRecorder.renderQueue", attributes: .concurrent)
@@ -45,7 +43,6 @@
     private var currentTime: CFTimeInterval = 0.0
 
     private var sceneView: SCNView
-    private var metalLayer: CAMetalLayer
 
     private var audioSettings: [String : Any]?
 
@@ -54,9 +51,10 @@
     private var videoFramesWritten: Bool = false
     private var waitingForPermissions: Bool = false
 
+    private var renderer: SCNRenderer!
+
     //public var updateFrameHandler: ((_ image: UIImage, _ time: CMTime) -> Void)? = nil
     private var finishedCompletionHandler: ((_ url: URL) -> Void)? = nil
-    private let context:CIContext
 
     @available(iOS 11.0, *)
     public convenience init(withARSCNView view: ARSCNView, options: Options = .default) throws {
@@ -67,14 +65,11 @@
 
     public init(scene: SCNView, options: Options = .default) throws {
 
-      if scene.renderingAPI != .metal { throw RenderingApiError() }
-
       self.sceneView = scene
 
-      self.context = CIContext.init(mtlDevice: MTLCreateSystemDefaultDevice()!)
+      self.renderer = SCNRenderer(device: MTLCreateSystemDefaultDevice()!, options: nil)
+      renderer.scene = scene.scene
 
-      self.metalLayer = (sceneView.layer as? CAMetalLayer)!
-      self.metalLayer.framebufferOnly = false
 
       self.options = options
 
@@ -83,17 +78,12 @@
 
       super.init()
 
-      metalLayer.addObserver(self, forKeyPath: "bounds", options: .new, context: nil)
-
       if AVAudioSession.sharedInstance().recordPermission() != .granted {
         self.options.useMicrophone = false
       }
-    }
 
-    public override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
-      prepare()
+      self.prepare()
     }
-
 
     public func setupMicrophone() {
 
@@ -110,10 +100,10 @@
 
     }
 
-    public func prepare() {
+    private func prepare() {
 
-      prepared = true
       self.prepare(with: self.options)
+      prepared = true
 
     }
 
@@ -166,7 +156,7 @@
 
     private func prepare(with options: Options) {
 
-      self.options.videoSize = CGSize(width: metalLayer.bounds.size.width * UIScreen.main.scale, height: metalLayer.bounds.size.height * UIScreen.main.scale)
+      self.options.videoSize = self.options.videoSize
 
       writer = try! AVAssetWriter(outputURL: self.options.outputUrl,
                                   fileType: self.options.fileType)
@@ -185,11 +175,6 @@
     public func startWriting() {
 
       if waitingForPermissions { return }
-
-      if !prepared {
-        self.prepare()
-      }
-      while !prepared {}
 
       cleanUp()
       
@@ -269,16 +254,15 @@
       }
       autoreleasepool {
 
-        while (currentDrawable == nil) {
-          currentDrawable = metalLayer.nextDrawable()
-        }
 
         SceneKitVideoRecorder.frameRenderSemaphore.wait()
 
+        let image = renderer.snapshot(atTime: CFAbsoluteTimeGetCurrent(), with: self.options.videoSize, antialiasingMode: .none)
+
         guard let pool = self.pixelBufferAdaptor.pixelBufferPool else { return }
 
-        let pixelBufferTemp = PixelBufferFactory.make(with: currentDrawable!, usingBuffer: pool)
-        currentDrawable = nil
+        let pixelBufferTemp = PixelBufferFactory.make(with: image, usingBuffer: pool)
+
         guard let pixelBuffer = pixelBufferTemp else { return }
 
         var presentationTime: CMTime
@@ -323,12 +307,6 @@
 
       displayLink?.invalidate()
       displayLink = nil
-
-    }
-
-    deinit {
-
-      metalLayer.removeObserver(self, forKeyPath: "bounds")
 
     }
     

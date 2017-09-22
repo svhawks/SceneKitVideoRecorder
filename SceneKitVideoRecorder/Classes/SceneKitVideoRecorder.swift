@@ -149,7 +149,7 @@ public class SceneKitVideoRecorder: NSObject, AVCaptureAudioDataOutputSampleBuff
 
   private func prepare(with options: Options) {
 
-    self.options.videoSize = self.options.videoSize
+    self.options.videoSize = options.videoSize
 
     writer = try! AVAssetWriter(outputURL: self.options.outputUrl,
                                 fileType: self.options.fileType)
@@ -173,9 +173,12 @@ public class SceneKitVideoRecorder: NSObject, AVCaptureAudioDataOutputSampleBuff
 
       SceneKitVideoRecorder.renderSemaphore.wait()
 
-      self?.startInputPipeline()
-
-      while self?.writer.status != .writing {}
+      guard self?.startInputPipeline() == true else {
+        print("AVAssetWriter Failed:", "Unknown error")
+        SceneKitVideoRecorder.renderSemaphore.signal()
+        self?.cleanUp()
+        return
+      }
 
       self?.startDisplayLink()
 
@@ -227,9 +230,10 @@ public class SceneKitVideoRecorder: NSObject, AVCaptureAudioDataOutputSampleBuff
 
   }
 
-  private func startInputPipeline() {
+  private func startInputPipeline() -> Bool {
 
-    writer.startWriting()
+    guard writer.startWriting() else { return false }
+    
     if useAudio {
       while audioCaptureStartedAt == nil && firstAudioTimestamp == nil {}
       let millisElapsed = NSDate().timeIntervalSince(audioCaptureStartedAt! as Date) * Double(options.timeScale)
@@ -239,15 +243,18 @@ public class SceneKitVideoRecorder: NSObject, AVCaptureAudioDataOutputSampleBuff
     }
     videoInput.requestMediaDataWhenReady(on: frameQueue, using: {})
 
+    return true
   }
 
   private func renderSnapshot() {
 
-    if !videoInput.isReadyForMoreMediaData { return }
     if writer.status == .unknown { return }
     if writer.status == .failed {
       self.prepare()
     }
+
+    if !videoInput.isReadyForMoreMediaData { return }
+
     autoreleasepool {
 
       let image = renderer.snapshot(atTime: CACurrentMediaTime(), with: self.options.videoSize, antialiasingMode: .none)

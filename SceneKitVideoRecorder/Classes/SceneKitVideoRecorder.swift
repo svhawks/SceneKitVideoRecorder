@@ -72,6 +72,8 @@ public class SceneKitVideoRecorder: NSObject, AVCaptureAudioDataOutputSampleBuff
 
     super.init()
 
+    FileController.clearTemporaryDirectory()
+    
     self.prepare()
   }
 
@@ -98,6 +100,35 @@ public class SceneKitVideoRecorder: NSObject, AVCaptureAudioDataOutputSampleBuff
 
   }
 
+  private func prepare(with options: Options) {
+
+    self.options.videoSize = options.videoSize
+
+    writer = try! AVAssetWriter(outputURL: self.options.outputUrl,
+                                fileType: self.options.fileType)
+    setupVideo()
+    if self.useAudio {
+      setupAudio()
+    }
+
+  }
+
+  @discardableResult public func cleanUp() -> URL {
+
+    var output = options.outputUrl
+
+    if options.deleteFileIfExists {
+      let nameOnly = (options.outputUrl.lastPathComponent as NSString).deletingPathExtension
+      let fileExt  = (options.outputUrl.lastPathComponent as NSString).pathExtension
+      let tempFileName = NSTemporaryDirectory() + nameOnly + "TMP." + fileExt
+      output = URL(fileURLWithPath: tempFileName)
+
+      FileController.move(from: options.outputUrl, to: output)
+    }
+
+    return output
+  }
+  
   private func setupAudio () {
 
     let device: AVCaptureDevice = AVCaptureDevice.defaultDevice(withMediaType: AVMediaTypeAudio)
@@ -145,27 +176,7 @@ public class SceneKitVideoRecorder: NSObject, AVCaptureAudioDataOutputSampleBuff
 
   }
 
-  private func prepare(with options: Options) {
-
-    self.options.videoSize = options.videoSize
-
-    writer = try! AVAssetWriter(outputURL: self.options.outputUrl,
-                                fileType: self.options.fileType)
-    setupVideo()
-
-  }
-
-  public func cleanUp() {
-
-    if options.deleteFileIfExists {
-      FileController.delete(file: options.outputUrl)
-    }
-
-  }
-
   public func startWriting() {
-
-    cleanUp()
 
     SceneKitVideoRecorder.renderQueue.async { [weak self] in
 
@@ -190,7 +201,8 @@ public class SceneKitVideoRecorder: NSObject, AVCaptureAudioDataOutputSampleBuff
 
     if !isRecording { return }
 
-    let outputUrl = options.outputUrl
+    let outputUrl = cleanUp()
+
     videoInput.markAsFinished()
     if useAudio {
       audioInput.markAsFinished()
@@ -203,8 +215,8 @@ public class SceneKitVideoRecorder: NSObject, AVCaptureAudioDataOutputSampleBuff
 
     writer.finishWriting(completionHandler: { [weak self] in
       completionHandler(outputUrl)
-      self?.prepare()
       SceneKitVideoRecorder.renderSemaphore.signal()
+      self?.prepare()
     })
 
   }
@@ -255,7 +267,10 @@ public class SceneKitVideoRecorder: NSObject, AVCaptureAudioDataOutputSampleBuff
 
     autoreleasepool {
 
-      let image = renderer.snapshot(atTime: CACurrentMediaTime(), with: self.options.videoSize, antialiasingMode: .none)
+      let time = CACurrentMediaTime()
+      let image = renderer.snapshot(atTime: time, with: self.options.videoSize, antialiasingMode: .none)
+
+      updateFrameHandler?(image)
 
       guard let pool = self.pixelBufferAdaptor.pixelBufferPool else { return }
 

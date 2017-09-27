@@ -48,13 +48,11 @@ public class SceneKitVideoRecorder: NSObject, AVCaptureAudioDataOutputSampleBuff
 
   private var initialRenderTime: CFTimeInterval!
 
-  //public var updateFrameHandler: ((_ image: UIImage, _ time: CMTime) -> Void)? = nil
+  public var updateFrameHandler: ((_ image: UIImage) -> Void)? = nil
   private var finishedCompletionHandler: ((_ url: URL) -> Void)? = nil
 
   @available(iOS 11.0, *)
   public convenience init(withARSCNView view: ARSCNView, options: Options = .default) throws {
-    var options = options
-    options.videoSize = CGSize(width: view.bounds.width * view.contentScaleFactor, height: view.bounds.height * view.contentScaleFactor)
     try self.init(scene: view, options: options)
   }
 

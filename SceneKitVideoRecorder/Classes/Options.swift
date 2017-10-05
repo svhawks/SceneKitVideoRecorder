@@ -5,6 +5,7 @@
 //
 
 import UIKit
+import SceneKit
 import AVFoundation
 
 extension SceneKitVideoRecorder {
@@ -17,7 +18,8 @@ extension SceneKitVideoRecorder {
     public var codec: String
     public var deleteFileIfExists: Bool
     public var useMicrophone: Bool
-    
+    public var antialiasingMode: SCNAntialiasingMode
+
     public static var `default`: Options {
       return Options(timeScale: 1000,
                      videoSize: CGSize(width: 720, height: 1280),
@@ -26,7 +28,8 @@ extension SceneKitVideoRecorder {
                      fileType: AVFileTypeAppleM4V,
                      codec: AVVideoCodecH264,
                      deleteFileIfExists: true,
-                     useMicrophone: true)
+                     useMicrophone: true,
+                     antialiasingMode: .multisampling4X)
     }
     
     var assetWriterVideoInputSettings: [String : Any] {

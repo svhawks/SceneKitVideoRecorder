@@ -236,9 +236,15 @@ public class SceneKitVideoRecorder: NSObject, AVCaptureAudioDataOutputSampleBuff
     firstAudioTimestamp = kCMTimeInvalid
 
     writer.finishWriting(completionHandler: { [weak self] in
-      completionHandler(outputUrl)
+      
+      guard let this = self else { return }
+
+      VideoTrim.trimVideo(sourceURL: outputUrl, destinationURL: outputUrl, trimPoints: [(this.firstVideoTimestamp - this.videoStartTimestamp, this.endingTimestamp - this.videoStartTimestamp)]) { (error) in
+         completionHandler(outputUrl)
+      }
+
       SceneKitVideoRecorder.renderSemaphore.signal()
-      self?.prepare()
+      this.prepare()
     })
 
   }

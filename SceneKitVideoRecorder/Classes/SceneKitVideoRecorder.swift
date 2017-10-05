@@ -28,8 +28,14 @@ public class SceneKitVideoRecorder: NSObject, AVCaptureAudioDataOutputSampleBuff
   private static let bufferAppendSemaphore = DispatchSemaphore(value: 1)
 
   private var displayLink: CADisplayLink? = nil
-  private var initialTime: CFTimeInterval = 0.0
-  private var currentTime: CFTimeInterval = 0.0
+
+  private var initialTime: CMTime = kCMTimeInvalid
+  private var currentTime: CMTime = kCMTimeInvalid
+  private var videoStartTimestamp: CMTime = kCMTimeZero
+  private var firstVideoTimestamp: CMTime = kCMTimeZero
+  private var firstAudioTimestamp: CMTime = kCMTimeInvalid
+
+  private var endingTimestamp: CMTime = kCMTimeInvalid
 
   private var sceneView: SCNView
 
@@ -101,6 +107,8 @@ public class SceneKitVideoRecorder: NSObject, AVCaptureAudioDataOutputSampleBuff
   }
 
   private func prepare(with options: Options) {
+
+    initialTime = kCMTimeInvalid
 
     self.options.videoSize = options.videoSize
 
@@ -182,6 +190,10 @@ public class SceneKitVideoRecorder: NSObject, AVCaptureAudioDataOutputSampleBuff
 
       SceneKitVideoRecorder.renderSemaphore.wait()
 
+      if !(self?.useAudio)! {
+        self?.firstAudioTimestamp = kCMTimeZero
+      }
+
       guard self?.startInputPipeline() == true else {
         print("AVAssetWriter Failed:", "Unknown error")
         SceneKitVideoRecorder.renderSemaphore.signal()
@@ -207,11 +219,21 @@ public class SceneKitVideoRecorder: NSObject, AVCaptureAudioDataOutputSampleBuff
     if useAudio {
       audioInput.markAsFinished()
     }
-    self.stopDisplayLink()
 
-    self.isRecording = false
-    self.isPrepared = false
-    self.videoFramesWritten = false
+    endingTimestamp = getCurrentCMTime()
+
+    stopDisplayLink()
+    captureSession.stopRunning()
+
+    isRecording = false
+    isPrepared = false
+    videoFramesWritten = false
+
+    initialTime = kCMTimeInvalid
+    currentTime = kCMTimeInvalid
+    videoStartTimestamp = kCMTimeZero
+    firstVideoTimestamp = kCMTimeZero
+    firstAudioTimestamp = kCMTimeInvalid
 
     writer.finishWriting(completionHandler: { [weak self] in
       completionHandler(outputUrl)
@@ -221,10 +243,18 @@ public class SceneKitVideoRecorder: NSObject, AVCaptureAudioDataOutputSampleBuff
 
   }
 
+  private func getCurrentCMTime() -> CMTime {
+    return CMTimeMakeWithSeconds(CACurrentMediaTime(), 1000000);
+  }
+
+  private func getAppendTime() -> CMTime {
+    currentTime = getCurrentCMTime() - initialTime
+    let time = CMTimeAdd(firstAudioTimestamp, currentTime)
+    return time
+  }
+
   private func startDisplayLink() {
 
-    currentTime = 0.0
-    initialTime = CFAbsoluteTimeGetCurrent()
     displayLink = CADisplayLink(target: self, selector: #selector(updateDisplayLink))
     displayLink?.preferredFramesPerSecond = options.fps
     displayLink?.add(to: .main, forMode: .commonModes)
@@ -242,15 +272,18 @@ public class SceneKitVideoRecorder: NSObject, AVCaptureAudioDataOutputSampleBuff
 
   private func startInputPipeline() -> Bool {
 
+    while CMTIME_IS_INVALID(firstAudioTimestamp) { }
+
     guard writer.startWriting() else { return false }
-    
-    if useAudio {
-      while audioCaptureStartedAt == nil && firstAudioTimestamp == nil {}
-      let millisElapsed = NSDate().timeIntervalSince(audioCaptureStartedAt! as Date) * Double(options.timeScale)
-      writer.startSession(atSourceTime: CMTimeAdd(firstAudioTimestamp!, CMTimeMake(Int64(millisElapsed), Int32(options.timeScale))))
-    }else{
-      writer.startSession(atSourceTime: kCMTimeZero)
+
+    if CMTIME_IS_INVALID(initialTime) {
+      initialTime = getCurrentCMTime()
     }
+
+    videoStartTimestamp = getCurrentCMTime()
+
+    writer.startSession(atSourceTime: getAppendTime())
+
     videoInput.requestMediaDataWhenReady(on: frameQueue, using: {})
 
     return true
@@ -265,10 +298,11 @@ public class SceneKitVideoRecorder: NSObject, AVCaptureAudioDataOutputSampleBuff
 
     if !videoInput.isReadyForMoreMediaData { return }
 
+
     autoreleasepool {
 
       let time = CACurrentMediaTime()
-      let image = renderer.snapshot(atTime: time, with: self.options.videoSize, antialiasingMode: .none)
+      let image = renderer.snapshot(atTime: time, with: self.options.videoSize, antialiasingMode: self.options.antialiasingMode)
 
       updateFrameHandler?(image)
 
@@ -278,39 +312,31 @@ public class SceneKitVideoRecorder: NSObject, AVCaptureAudioDataOutputSampleBuff
 
       guard let pixelBuffer = pixelBufferTemp else { return }
 
-      var presentationTime: CMTime
-
-      if(useAudio){
-        let millisElapsed = NSDate().timeIntervalSince(audioCaptureStartedAt! as Date) * Double(options.timeScale)
-        presentationTime = CMTimeAdd(firstAudioTimestamp!, CMTimeMake(Int64(millisElapsed), Int32(options.timeScale)))
-      }else{
-        currentTime = CFAbsoluteTimeGetCurrent() - initialTime
-        let value: Int64 = Int64(currentTime * CFTimeInterval(options.timeScale))
-        presentationTime = CMTimeMake(value, options.timeScale)
-      }
-
       SceneKitVideoRecorder.bufferAppendSemaphore.wait()
 
       bufferQueue.async { [weak self] in
-        if self?.videoFramesWritten == false { self?.videoFramesWritten = true }
+        if self?.videoFramesWritten == false {
+          self?.videoFramesWritten = true
+          self?.firstVideoTimestamp = (self?.getCurrentCMTime())!
+        }
         if !(self?.videoInput.isReadyForMoreMediaData)! { return }
-        self?.pixelBufferAdaptor.append(pixelBuffer, withPresentationTime: presentationTime)
+        self?.pixelBufferAdaptor.append(pixelBuffer, withPresentationTime: (self?.getAppendTime())!)
         SceneKitVideoRecorder.bufferAppendSemaphore.signal()
       }
     }
 
   }
 
-  private var audioCaptureStartedAt: NSDate?
-  private var firstAudioTimestamp: CMTime?
-
   public func captureOutput(_ output: AVCaptureOutput!, didOutputSampleBuffer sampleBuffer: CMSampleBuffer!, from connection: AVCaptureConnection!) {
 
-    if(audioCaptureStartedAt == nil) {
-      audioCaptureStartedAt = NSDate()
+    if CMTIME_IS_INVALID(firstAudioTimestamp) {
       firstAudioTimestamp = CMSampleBufferGetPresentationTimeStamp(sampleBuffer)
+      if CMTIME_IS_INVALID(initialTime) {
+        initialTime = getCurrentCMTime()
+      }
     }
-    if(audioInput.isReadyForMoreMediaData && isRecording && videoFramesWritten){
+
+    if audioInput.isReadyForMoreMediaData && isRecording && videoFramesWritten {
       audioInput.append(sampleBuffer)
     }
 

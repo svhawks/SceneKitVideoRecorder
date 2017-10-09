@@ -66,9 +66,6 @@ public class SceneKitVideoRecorder: NSObject, AVCaptureAudioDataOutputSampleBuff
 
     self.sceneView = scene
 
-    self.renderer = SCNRenderer(device: MTLCreateSystemDefaultDevice()!, options: nil)
-    renderer.scene = scene.scene
-
     self.initialRenderTime = CACurrentMediaTime()
 
     self.options = options
@@ -107,6 +104,10 @@ public class SceneKitVideoRecorder: NSObject, AVCaptureAudioDataOutputSampleBuff
   }
 
   private func prepare(with options: Options) {
+
+    guard let device = MTLCreateSystemDefaultDevice() else { return }
+    self.renderer = SCNRenderer(device: device, options: nil)
+    renderer.scene = self.sceneView.scene
 
     initialTime = kCMTimeInvalid
 

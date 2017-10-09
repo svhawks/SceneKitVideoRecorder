@@ -303,9 +303,6 @@ public class SceneKitVideoRecorder: NSObject, AVCaptureAudioDataOutputSampleBuff
       self.prepare()
     }
 
-    if !videoInput.isReadyForMoreMediaData { return }
-
-
     autoreleasepool {
 
       let time = CACurrentMediaTime()
@@ -326,7 +323,7 @@ public class SceneKitVideoRecorder: NSObject, AVCaptureAudioDataOutputSampleBuff
           self?.videoFramesWritten = true
           self?.firstVideoTimestamp = (self?.getCurrentCMTime())!
         }
-        if !(self?.videoInput.isReadyForMoreMediaData)! { return }
+
         self?.pixelBufferAdaptor.append(pixelBuffer, withPresentationTime: (self?.getAppendTime())!)
         SceneKitVideoRecorder.bufferAppendSemaphore.signal()
       }

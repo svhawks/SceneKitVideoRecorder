@@ -219,12 +219,12 @@ public class SceneKitVideoRecorder: NSObject, AVCaptureAudioDataOutputSampleBuff
     videoInput.markAsFinished()
     if useAudio {
       audioInput.markAsFinished()
+      captureSession.stopRunning()
     }
 
     endingTimestamp = getCurrentCMTime()
 
     stopDisplayLink()
-    captureSession.stopRunning()
 
     isRecording = false
     isPrepared = false

@@ -276,11 +276,10 @@ public class SceneKitVideoRecorder: NSObject, AVCaptureAudioDataOutputSampleBuff
   @objc private func updateDisplayLink() {
 
     frameQueue.async { [weak self] in
-      print("in")
-      guard let input = self?.videoInput, input.isReadyForMoreMediaData else { print("fail"); return }
-      print("out")
+      guard let input = self?.videoInput, input.isReadyForMoreMediaData else { return }
 
       if !(self?.isSourceTimeSpecified)! {
+        guard let time = self?.getAppendTime(), CMTIME_IS_NUMERIC(time) else { return }
         self?.writer.startSession(atSourceTime: (self?.getAppendTime())!)
         self?.isSourceTimeSpecified = true
       }

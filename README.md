@@ -1,3 +1,5 @@
+![SceneKitVideoRecorder](https://i.imgur.com/1f7aXFY.png "SceneKitVideoRecorder")
+
 # SceneKitVideoRecorder
 
 [![Version](https://img.shields.io/cocoapods/v/SceneKitVideoRecorder.svg?style=flat)](http://cocoapods.org/pods/SceneKitVideoRecorder)

@@ -276,7 +276,11 @@ public class SceneKitVideoRecorder: NSObject, AVCaptureAudioDataOutputSampleBuff
   @objc private func updateDisplayLink() {
 
     frameQueue.async { [weak self] in
+      
+      if self?.writer.status == .unknown { return }
+      if self?.writer.status == .failed { return }
       guard let input = self?.videoInput, input.isReadyForMoreMediaData else { return }
+
 
       if !(self?.isSourceTimeSpecified)! {
         guard let time = self?.getAppendTime(), CMTIME_IS_NUMERIC(time) else { return }
@@ -307,11 +311,6 @@ public class SceneKitVideoRecorder: NSObject, AVCaptureAudioDataOutputSampleBuff
   }
 
   private func renderSnapshot() {
-
-    if writer.status == .unknown { return }
-    if writer.status == .failed {
-      self.prepare()
-    }
 
     autoreleasepool {
 

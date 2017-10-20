@@ -13,8 +13,19 @@
 		2C1EA3841F6281C200E97D5E /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 2C1EA3821F6281C200E97D5E /* Main.storyboard */; };
 		2C1EA3861F6281C200E97D5E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2C1EA3851F6281C200E97D5E /* Assets.xcassets */; };
 		2C1EA3891F6281C200E97D5E /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 2C1EA3871F6281C200E97D5E /* LaunchScreen.storyboard */; };
+		2C3EB95B1F9A580000AA77B4 /* SceneKitVideoRecorderDemoUnitTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C3EB95A1F9A580000AA77B4 /* SceneKitVideoRecorderDemoUnitTests.swift */; };
 		EEB00B02F5C6843413C3F432 /* Pods_SceneKitVideoRecorderDemo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F9BD48745ADAAAC0D1AE4D17 /* Pods_SceneKitVideoRecorderDemo.framework */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		2C3EB95D1F9A580000AA77B4 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 2C1EA3711F6281C200E97D5E /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 2C1EA3781F6281C200E97D5E;
+			remoteInfo = SceneKitVideoRecorderDemo;
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		2C1EA3791F6281C200E97D5E /* SceneKitVideoRecorderDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SceneKitVideoRecorderDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -25,6 +36,9 @@
 		2C1EA3851F6281C200E97D5E /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		2C1EA3881F6281C200E97D5E /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		2C1EA38A1F6281C200E97D5E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		2C3EB9581F9A580000AA77B4 /* SceneKitVideoRecorderDemoUnitTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SceneKitVideoRecorderDemoUnitTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		2C3EB95A1F9A580000AA77B4 /* SceneKitVideoRecorderDemoUnitTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneKitVideoRecorderDemoUnitTests.swift; sourceTree = "<group>"; };
+		2C3EB95C1F9A580000AA77B4 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		5637905D9A0E8ABEDCB7C091 /* Pods-SceneKitVideoRecorderDemo.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SceneKitVideoRecorderDemo.release.xcconfig"; path = "Pods/Target Support Files/Pods-SceneKitVideoRecorderDemo/Pods-SceneKitVideoRecorderDemo.release.xcconfig"; sourceTree = "<group>"; };
 		EAA3B70BD9F1A1E70DEC8926 /* Pods-SceneKitVideoRecorderDemo.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SceneKitVideoRecorderDemo.debug.xcconfig"; path = "Pods/Target Support Files/Pods-SceneKitVideoRecorderDemo/Pods-SceneKitVideoRecorderDemo.debug.xcconfig"; sourceTree = "<group>"; };
 		F9BD48745ADAAAC0D1AE4D17 /* Pods_SceneKitVideoRecorderDemo.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SceneKitVideoRecorderDemo.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -39,6 +53,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		2C3EB9551F9A580000AA77B4 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -46,6 +67,7 @@
 			isa = PBXGroup;
 			children = (
 				2C1EA37B1F6281C200E97D5E /* SceneKitVideoRecorderDemo */,
+				2C3EB9591F9A580000AA77B4 /* SceneKitVideoRecorderDemoUnitTests */,
 				2C1EA37A1F6281C200E97D5E /* Products */,
 				7D48497869DC66C1C9741FDD /* Pods */,
 				C071E4A160A212D4358F643D /* Frameworks */,
@@ -56,6 +78,7 @@
 			isa = PBXGroup;
 			children = (
 				2C1EA3791F6281C200E97D5E /* SceneKitVideoRecorderDemo.app */,
+				2C3EB9581F9A580000AA77B4 /* SceneKitVideoRecorderDemoUnitTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -72,6 +95,15 @@
 				2C1EA38A1F6281C200E97D5E /* Info.plist */,
 			);
 			path = SceneKitVideoRecorderDemo;
+			sourceTree = "<group>";
+		};
+		2C3EB9591F9A580000AA77B4 /* SceneKitVideoRecorderDemoUnitTests */ = {
+			isa = PBXGroup;
+			children = (
+				2C3EB95A1F9A580000AA77B4 /* SceneKitVideoRecorderDemoUnitTests.swift */,
+				2C3EB95C1F9A580000AA77B4 /* Info.plist */,
+			);
+			path = SceneKitVideoRecorderDemoUnitTests;
 			sourceTree = "<group>";
 		};
 		7D48497869DC66C1C9741FDD /* Pods */ = {
@@ -114,19 +146,42 @@
 			productReference = 2C1EA3791F6281C200E97D5E /* SceneKitVideoRecorderDemo.app */;
 			productType = "com.apple.product-type.application";
 		};
+		2C3EB9571F9A580000AA77B4 /* SceneKitVideoRecorderDemoUnitTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 2C3EB9611F9A580000AA77B4 /* Build configuration list for PBXNativeTarget "SceneKitVideoRecorderDemoUnitTests" */;
+			buildPhases = (
+				2C3EB9541F9A580000AA77B4 /* Sources */,
+				2C3EB9551F9A580000AA77B4 /* Frameworks */,
+				2C3EB9561F9A580000AA77B4 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				2C3EB95E1F9A580000AA77B4 /* PBXTargetDependency */,
+			);
+			name = SceneKitVideoRecorderDemoUnitTests;
+			productName = SceneKitVideoRecorderDemoUnitTests;
+			productReference = 2C3EB9581F9A580000AA77B4 /* SceneKitVideoRecorderDemoUnitTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
 		2C1EA3711F6281C200E97D5E /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastSwiftUpdateCheck = 0900;
+				LastSwiftUpdateCheck = 0910;
 				LastUpgradeCheck = 0900;
 				ORGANIZATIONNAME = okaris;
 				TargetAttributes = {
 					2C1EA3781F6281C200E97D5E = {
 						CreatedOnToolsVersion = 9.0;
 						ProvisioningStyle = Automatic;
+					};
+					2C3EB9571F9A580000AA77B4 = {
+						CreatedOnToolsVersion = 9.1;
+						ProvisioningStyle = Automatic;
+						TestTargetID = 2C1EA3781F6281C200E97D5E;
 					};
 				};
 			};
@@ -144,6 +199,7 @@
 			projectRoot = "";
 			targets = (
 				2C1EA3781F6281C200E97D5E /* SceneKitVideoRecorderDemo */,
+				2C3EB9571F9A580000AA77B4 /* SceneKitVideoRecorderDemoUnitTests */,
 			);
 		};
 /* End PBXProject section */
@@ -157,6 +213,13 @@
 				2C1EA3891F6281C200E97D5E /* LaunchScreen.storyboard in Resources */,
 				2C1EA3861F6281C200E97D5E /* Assets.xcassets in Resources */,
 				2C1EA3841F6281C200E97D5E /* Main.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		2C3EB9561F9A580000AA77B4 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -226,7 +289,23 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		2C3EB9541F9A580000AA77B4 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2C3EB95B1F9A580000AA77B4 /* SceneKitVideoRecorderDemoUnitTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		2C3EB95E1F9A580000AA77B4 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 2C1EA3781F6281C200E97D5E /* SceneKitVideoRecorderDemo */;
+			targetProxy = 2C3EB95D1F9A580000AA77B4 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		2C1EA3821F6281C200E97D5E /* Main.storyboard */ = {
@@ -393,6 +472,40 @@
 			};
 			name = Release;
 		};
+		2C3EB95F1F9A580000AA77B4 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = WQUXHXJ3LM;
+				INFOPLIST_FILE = SceneKitVideoRecorderDemoUnitTests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.1;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.okaris.SceneKitVideoRecorderDemoUnitTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 4.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/SceneKitVideoRecorderDemo.app/SceneKitVideoRecorderDemo";
+			};
+			name = Debug;
+		};
+		2C3EB9601F9A580000AA77B4 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = WQUXHXJ3LM;
+				INFOPLIST_FILE = SceneKitVideoRecorderDemoUnitTests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.1;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.okaris.SceneKitVideoRecorderDemoUnitTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 4.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/SceneKitVideoRecorderDemo.app/SceneKitVideoRecorderDemo";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -410,6 +523,15 @@
 			buildConfigurations = (
 				2C1EA38E1F6281C200E97D5E /* Debug */,
 				2C1EA38F1F6281C200E97D5E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		2C3EB9611F9A580000AA77B4 /* Build configuration list for PBXNativeTarget "SceneKitVideoRecorderDemoUnitTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				2C3EB95F1F9A580000AA77B4 /* Debug */,
+				2C3EB9601F9A580000AA77B4 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

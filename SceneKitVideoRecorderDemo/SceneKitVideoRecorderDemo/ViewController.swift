@@ -48,6 +48,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
 
   @IBAction func startRecording (sender: UIButton) {
     sender.backgroundColor = .red
+    self.recorder?.setupAudio()
     self.recorder?.startWriting()
   }
 

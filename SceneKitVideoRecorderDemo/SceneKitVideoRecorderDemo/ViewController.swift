@@ -44,7 +44,6 @@ class ViewController: UIViewController, ARSCNViewDelegate {
 
     // Run the view's session
     sceneView.session.run(configuration)
-    recorder?.setupMicrophone()
   }
 
   @IBAction func startRecording (sender: UIButton) {

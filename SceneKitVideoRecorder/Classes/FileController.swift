@@ -20,7 +20,12 @@ struct FileController {
     if fm.fileExists(atPath: urlTo.path) {
       try! fm.removeItem(at: urlTo)
     }
+
     try! fm.moveItem(at: urlFrom, to: urlTo)
+
+    if fm.fileExists(atPath: urlFrom.path) {
+      try! fm.removeItem(at: urlFrom)
+    }
   }
 
   static func clearTemporaryDirectory(){

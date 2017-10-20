@@ -14,6 +14,8 @@ extension SceneKitVideoRecorder {
     public var videoSize: CGSize
     public var fps: Int
     public var outputUrl: URL
+    public var audioOnlyUrl: URL
+    public var videoOnlyUrl: URL
     public var fileType: String
     public var codec: String
     public var deleteFileIfExists: Bool
@@ -25,6 +27,8 @@ extension SceneKitVideoRecorder {
                      videoSize: CGSize(width: 720, height: 1280),
                      fps: 60,
                      outputUrl: URL(fileURLWithPath: NSTemporaryDirectory() + "output.mp4"),
+                     audioOnlyUrl: URL(fileURLWithPath: NSTemporaryDirectory() + "audio.m4a"),
+                     videoOnlyUrl: URL(fileURLWithPath: NSTemporaryDirectory() + "video.mp4"),
                      fileType: AVFileTypeAppleM4V,
                      codec: AVVideoCodecH264,
                      deleteFileIfExists: true,
@@ -41,7 +45,12 @@ extension SceneKitVideoRecorder {
     }
     
     var assetWriterAudioInputSettings: [String : Any] {
-      return [:]
+      return [
+        AVFormatIDKey: Int(kAudioFormatMPEG4AAC),
+        AVSampleRateKey: 12000,
+        AVNumberOfChannelsKey: 1,
+        AVEncoderAudioQualityKey: AVAudioQuality.high.rawValue
+      ]
     }
     
     var sourcePixelBufferAttributes: [String : Any] {

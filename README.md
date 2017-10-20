@@ -18,7 +18,14 @@ SceneKitVideoRecorder is available through [CocoaPods](http://cocoapods.org). To
 it, simply add the following line to your Podfile:
 
 ```ruby
-pod "SceneKitVideoRecorder"
+pod 'SceneKitVideoRecorder'
+```
+
+
+To install Swift 4 branch add the following line to your Podfile:
+```ruby
+pod 'SceneKitVideoRecorder', :git => 'https://github.com/svtek/SceneKitVideoRecorder.git', :branch => 'swift4'
+
 ```
 
 ## Usage

@@ -359,9 +359,9 @@ public class SceneKitVideoRecorder: NSObject, AVAudioRecorderDelegate {
       case AVAssetExportSessionStatus.completed:
         completion()
       case  AVAssetExportSessionStatus.failed:
-        print("failed \(assetExport.error)")
+        print("failed \(String(describing: assetExport.error))")
       case AVAssetExportSessionStatus.cancelled:
-        print("cancelled \(assetExport.error)")
+        print("cancelled \(String(describing: assetExport.error))")
       default:
         completion()
       }

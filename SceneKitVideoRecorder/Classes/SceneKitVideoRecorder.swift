@@ -39,7 +39,7 @@ public class SceneKitVideoRecorder: NSObject, AVAudioRecorderDelegate {
   private var isAudioSetup: Bool = false
 
   private var useAudio: Bool {
-    return self.options.useMicrophone && AVAudioSession.sharedInstance().recordPermission() == .granted && isAudioSetup
+    return options.useMicrophone && AVAudioSession.sharedInstance().recordPermission() == .granted && isAudioSetup
   }
   private var videoFramesWritten: Bool = false
   private var waitingForPermissions: Bool = false
@@ -84,6 +84,7 @@ public class SceneKitVideoRecorder: NSObject, AVAudioRecorderDelegate {
     renderer.scene = self.sceneView.scene
 
     initialTime = kCMTimeInvalid
+    isAudioSetup = false
 
     self.options.videoSize = options.videoSize
 
@@ -118,18 +119,18 @@ public class SceneKitVideoRecorder: NSObject, AVAudioRecorderDelegate {
     do {
       try recordingSession.setCategory(AVAudioSessionCategoryPlayAndRecord)
       try recordingSession.setActive(true)
-      recordingSession.requestRecordPermission() { [unowned self] allowed in
+      recordingSession.requestRecordPermission() { allowed in
         DispatchQueue.main.async {
           if allowed {
-            //self.options.useMicrophone = true
+            self.options.useMicrophone = true
           } else {
-            //self.options.useMicrophone = false
+            self.options.useMicrophone = false
           }
         }
       }
       isAudioSetup = true
     } catch {
-      //self.options.useMicrophone = false
+      self.options.useMicrophone = false
     }
 
   }
@@ -195,7 +196,6 @@ public class SceneKitVideoRecorder: NSObject, AVAudioRecorderDelegate {
 
     isRecording = false
     isPrepared = false
-    isAudioSetup = false
     videoFramesWritten = false
 
     currentTime = kCMTimeInvalid

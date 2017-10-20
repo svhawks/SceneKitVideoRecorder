@@ -88,7 +88,7 @@ public class SceneKitVideoRecorder: NSObject, AVAudioRecorderDelegate {
 
     self.options.videoSize = options.videoSize
 
-    writer = try! AVAssetWriter(outputURL: self.options.videoOnlyUrl, fileType: self.options.fileType)
+    writer = try! AVAssetWriter(outputURL: self.options.videoOnlyUrl, fileType: AVFileType(rawValue: self.options.fileType))
 
     setupVideo()
   }
@@ -157,7 +157,7 @@ public class SceneKitVideoRecorder: NSObject, AVAudioRecorderDelegate {
 
   func setupVideo() {
 
-    self.videoInput = AVAssetWriterInput(mediaType: AVMediaTypeVideo,
+    self.videoInput = AVAssetWriterInput(mediaType: AVMediaType.video,
                                          outputSettings: self.options.assetWriterVideoInputSettings)
 
     self.videoInput.mediaTimeScale = self.options.timeScale
@@ -322,11 +322,11 @@ public class SceneKitVideoRecorder: NSObject, AVAudioRecorderDelegate {
     let aVideoAsset : AVAsset = AVAsset(url: videoUrl)
     let aAudioAsset : AVAsset = AVAsset(url: audioUrl)
 
-    mutableCompositionVideoTrack.append(mixComposition.addMutableTrack(withMediaType: AVMediaTypeVideo, preferredTrackID: kCMPersistentTrackID_Invalid))
-    mutableCompositionAudioTrack.append( mixComposition.addMutableTrack(withMediaType: AVMediaTypeAudio, preferredTrackID: kCMPersistentTrackID_Invalid))
+    mutableCompositionVideoTrack.append(mixComposition.addMutableTrack(withMediaType: AVMediaType.video, preferredTrackID: kCMPersistentTrackID_Invalid)!)
+    mutableCompositionAudioTrack.append( mixComposition.addMutableTrack(withMediaType: AVMediaType.audio, preferredTrackID: kCMPersistentTrackID_Invalid)!)
 
-    let aVideoAssetTrack : AVAssetTrack = aVideoAsset.tracks(withMediaType: AVMediaTypeVideo)[0]
-    let aAudioAssetTrack : AVAssetTrack = aAudioAsset.tracks(withMediaType: AVMediaTypeAudio)[0]
+    let aVideoAssetTrack : AVAssetTrack = aVideoAsset.tracks(withMediaType: AVMediaType.video)[0]
+    let aAudioAssetTrack : AVAssetTrack = aAudioAsset.tracks(withMediaType: AVMediaType.audio)[0]
 
 
 
@@ -349,7 +349,7 @@ public class SceneKitVideoRecorder: NSObject, AVAudioRecorderDelegate {
     let savePathUrl : URL = self.options.outputUrl
 
     let assetExport: AVAssetExportSession = AVAssetExportSession(asset: mixComposition, presetName: AVAssetExportPresetHighestQuality)!
-    assetExport.outputFileType = AVFileTypeMPEG4
+    assetExport.outputFileType = AVFileType.mp4
     assetExport.outputURL = savePathUrl
     assetExport.shouldOptimizeForNetworkUse = true
 

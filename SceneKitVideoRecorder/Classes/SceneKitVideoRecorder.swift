@@ -117,7 +117,7 @@ public class SceneKitVideoRecorder: NSObject, AVAudioRecorderDelegate {
     recordingSession = AVAudioSession.sharedInstance()
 
     do {
-      try recordingSession.setCategory(AVAudioSessionCategoryPlayAndRecord)
+      try recordingSession.setCategory(AVAudioSessionCategoryPlayAndRecord, with: [AVAudioSessionCategoryOptions.defaultToSpeaker])
       try recordingSession.setActive(true)
       recordingSession.requestRecordPermission() { allowed in
         DispatchQueue.main.async {

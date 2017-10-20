@@ -6,6 +6,7 @@
 [![Downloads](https://img.shields.io/cocoapods/dt/SceneKitVideoRecorder.svg?style=flat)](http://cocoapods.org/pods/SceneKitVideoRecorder)
 [![License](https://img.shields.io/cocoapods/l/SceneKitVideoRecorder.svg?style=flat)](http://cocoapods.org/pods/SceneKitVideoRecorder)
 [![Platform](https://img.shields.io/cocoapods/p/SceneKitVideoRecorder.svg?style=flat)](http://cocoapods.org/pods/SceneKitVideoRecorder)
+[![Build Status](https://travis-ci.org/svtek/SceneKitVideoRecorder.svg?branch=master)](https://travis-ci.org/svtek/SceneKitVideoRecorder)
 
 ## Example
 

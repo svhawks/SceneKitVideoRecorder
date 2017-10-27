@@ -168,7 +168,7 @@ public class SceneKitVideoRecorder: NSObject, AVAudioRecorderDelegate {
 
   }
 
-  public func startWriting() {
+  public func startWriting(completionHandler: (@escaping (_ success: Bool) -> Void) = {_ in }) {
 
     if isRecording { return }
     isRecording = true
@@ -179,14 +179,19 @@ public class SceneKitVideoRecorder: NSObject, AVAudioRecorderDelegate {
       print("AVAssetWriter Failed:", "Unknown error")
       stopDisplayLink()
       cleanUp()
+      completionHandler(false)
       return
     }
+
+    completionHandler(true)
 
   }
 
   public func finishWriting(completionHandler: (@escaping (_ url: URL) -> Void)) {
 
     if !isRecording { return }
+
+    if writer.status != .writing { return }
 
     videoInput.markAsFinished()
 
@@ -253,6 +258,8 @@ public class SceneKitVideoRecorder: NSObject, AVAudioRecorderDelegate {
   }
 
   private func startInputPipeline() -> Bool {
+
+    if writer.status != .unknown { return false }
 
     guard writer.startWriting() else { return false }
 

@@ -36,10 +36,8 @@ public class SceneKitVideoRecorder: NSObject, AVAudioRecorderDelegate {
   private var isPrepared: Bool = false
   private var isRecording: Bool = false
 
-  private var isAudioSetup: Bool = false
-
   private var useAudio: Bool {
-    return options.useMicrophone && AVAudioSession.sharedInstance().recordPermission() == .granted && isAudioSetup
+    return options.useMicrophone && AVAudioSession.sharedInstance().recordPermission() == .granted
   }
   private var videoFramesWritten: Bool = false
   private var waitingForPermissions: Bool = false
@@ -50,11 +48,11 @@ public class SceneKitVideoRecorder: NSObject, AVAudioRecorderDelegate {
   private var finishedCompletionHandler: ((_ url: URL) -> Void)? = nil
 
   @available(iOS 11.0, *)
-  public convenience init(withARSCNView view: ARSCNView, options: Options = .default) throws {
+  public convenience init(withARSCNView view: ARSCNView, options: Options = .`default`) throws {
     try self.init(scene: view, options: options)
   }
 
-  public init(scene: SCNView, options: Options = .default) throws {
+  public init(scene: SCNView, options: Options = .`default`) throws {
 
     self.sceneView = scene
 
@@ -78,19 +76,18 @@ public class SceneKitVideoRecorder: NSObject, AVAudioRecorderDelegate {
   }
 
   private func prepare(with options: Options) {
-
     guard let device = MTLCreateSystemDefaultDevice() else { return }
     self.renderer = SCNRenderer(device: device, options: nil)
     renderer.scene = self.sceneView.scene
 
     initialTime = kCMTimeInvalid
-    isAudioSetup = false
 
     self.options.videoSize = options.videoSize
 
     writer = try! AVAssetWriter(outputURL: self.options.videoOnlyUrl, fileType: self.options.fileType)
 
     setupVideo()
+    setupAudio()
   }
 
   @discardableResult public func cleanUp() -> URL {
@@ -112,12 +109,13 @@ public class SceneKitVideoRecorder: NSObject, AVAudioRecorderDelegate {
     return output
   }
 
-  public func setupAudio() {
+  private func setupAudio() {
+    guard self.options.useMicrophone else { return }
 
     recordingSession = AVAudioSession.sharedInstance()
 
     do {
-      try recordingSession.setCategory(AVAudioSessionCategoryPlayAndRecord, with: [AVAudioSessionCategoryOptions.defaultToSpeaker])
+      try recordingSession.setCategory(AVAudioSessionCategoryPlayAndRecord, with: [.defaultToSpeaker])
       try recordingSession.setActive(true)
       recordingSession.requestRecordPermission() { allowed in
         DispatchQueue.main.async {
@@ -128,11 +126,9 @@ public class SceneKitVideoRecorder: NSObject, AVAudioRecorderDelegate {
           }
         }
       }
-      isAudioSetup = true
     } catch {
       self.options.useMicrophone = false
     }
-
   }
 
   private func startRecordingAudio() {
@@ -155,7 +151,7 @@ public class SceneKitVideoRecorder: NSObject, AVAudioRecorderDelegate {
     audioRecorder = nil
   }
 
-  func setupVideo() {
+  private func setupVideo() {
 
     self.videoInput = AVAssetWriterInput(mediaType: AVMediaTypeVideo,
                                          outputSettings: self.options.assetWriterVideoInputSettings)
@@ -165,7 +161,6 @@ public class SceneKitVideoRecorder: NSObject, AVAudioRecorderDelegate {
     self.pixelBufferAdaptor = AVAssetWriterInputPixelBufferAdaptor(assetWriterInput: videoInput,sourcePixelBufferAttributes: self.options.sourcePixelBufferAttributes)
 
     writer.add(videoInput)
-
   }
 
   public func startWriting(completionHandler: (@escaping (_ success: Bool) -> Void) = {_ in }) {
@@ -247,7 +242,7 @@ public class SceneKitVideoRecorder: NSObject, AVAudioRecorderDelegate {
   @objc private func updateDisplayLink() {
 
     frameQueue.async { [weak self] in
-      
+
       if self?.writer.status == .unknown { return }
       if self?.writer.status == .failed { return }
       guard let input = self?.videoInput, input.isReadyForMoreMediaData else { return }
@@ -303,7 +298,6 @@ public class SceneKitVideoRecorder: NSObject, AVAudioRecorderDelegate {
 
       bufferQueue.async { [weak self] in
 
-
         self?.pixelBufferAdaptor.append(pixelBuffer, withPresentationTime: appendTime)
 
       }
@@ -325,7 +319,6 @@ public class SceneKitVideoRecorder: NSObject, AVAudioRecorderDelegate {
     var mutableCompositionAudioTrack : [AVMutableCompositionTrack] = []
     let totalVideoCompositionInstruction : AVMutableVideoCompositionInstruction = AVMutableVideoCompositionInstruction()
 
-
     let aVideoAsset : AVAsset = AVAsset(url: videoUrl)
     let aAudioAsset : AVAsset = AVAsset(url: audioUrl)
 
@@ -334,8 +327,6 @@ public class SceneKitVideoRecorder: NSObject, AVAudioRecorderDelegate {
 
     let aVideoAssetTrack : AVAssetTrack = aVideoAsset.tracks(withMediaType: AVMediaTypeVideo)[0]
     let aAudioAssetTrack : AVAssetTrack = aAudioAsset.tracks(withMediaType: AVMediaTypeAudio)[0]
-
-
 
     do{
       try mutableCompositionVideoTrack[0].insertTimeRange(CMTimeRangeMake(kCMTimeZero, aVideoAssetTrack.timeRange.duration), of: aVideoAssetTrack, at: kCMTimeZero)
@@ -376,3 +367,4 @@ public class SceneKitVideoRecorder: NSObject, AVAudioRecorderDelegate {
   }
 
 }
+

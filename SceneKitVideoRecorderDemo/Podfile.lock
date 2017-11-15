@@ -1,5 +1,5 @@
 PODS:
-  - SceneKitVideoRecorder (1.4.0)
+  - SceneKitVideoRecorder (1.4.2)
 
 DEPENDENCIES:
   - SceneKitVideoRecorder (from `../`)
@@ -9,7 +9,7 @@ EXTERNAL SOURCES:
     :path: ../
 
 SPEC CHECKSUMS:
-  SceneKitVideoRecorder: 57a0fdf26c31389638737f814fa6fc9d14fa098b
+  SceneKitVideoRecorder: 9b4cff1dd100be8c1b9eba6ed9d45095632410ac
 
 PODFILE CHECKSUM: 021703fdf9e627ae9130f7f3490711d953c90f66
 

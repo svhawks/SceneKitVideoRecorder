@@ -33,11 +33,13 @@ public class SceneKitVideoRecorder: NSObject, AVAudioRecorderDelegate {
 
   private var audioSettings: [String : Any]?
 
+  public var isAudioSetup: Bool = false
+
   private var isPrepared: Bool = false
   private var isRecording: Bool = false
 
   private var useAudio: Bool {
-    return options.useMicrophone && AVAudioSession.sharedInstance().recordPermission() == .granted
+    return options.useMicrophone && AVAudioSession.sharedInstance().recordPermission() == .granted && isAudioSetup
   }
   private var videoFramesWritten: Bool = false
   private var waitingForPermissions: Bool = false
@@ -52,7 +54,7 @@ public class SceneKitVideoRecorder: NSObject, AVAudioRecorderDelegate {
     try self.init(scene: view, options: options)
   }
 
-  public init(scene: SCNView, options: Options = .`default`) throws {
+  public init(scene: SCNView, options: Options = .`default`, setupAudio: Bool = true) throws {
 
     self.sceneView = scene
 
@@ -66,6 +68,10 @@ public class SceneKitVideoRecorder: NSObject, AVAudioRecorderDelegate {
     FileController.clearTemporaryDirectory()
 
     self.prepare()
+
+    if setupAudio {
+      self.setupAudio()
+    }
   }
 
   private func prepare() {
@@ -86,8 +92,7 @@ public class SceneKitVideoRecorder: NSObject, AVAudioRecorderDelegate {
 
     writer = try! AVAssetWriter(outputURL: self.options.videoOnlyUrl, fileType: self.options.fileType)
 
-    setupVideo()
-    setupAudio()
+    self.setupVideo()
   }
 
   @discardableResult public func cleanUp() -> URL {
@@ -109,8 +114,8 @@ public class SceneKitVideoRecorder: NSObject, AVAudioRecorderDelegate {
     return output
   }
 
-  private func setupAudio() {
-    guard self.options.useMicrophone else { return }
+  public func setupAudio() {
+    guard self.options.useMicrophone, !self.isAudioSetup else { return }
 
     recordingSession = AVAudioSession.sharedInstance()
 
@@ -120,14 +125,14 @@ public class SceneKitVideoRecorder: NSObject, AVAudioRecorderDelegate {
       recordingSession.requestRecordPermission() { allowed in
         DispatchQueue.main.async {
           if allowed {
-            self.options.useMicrophone = true
+            self.isAudioSetup = true
           } else {
-            self.options.useMicrophone = false
+            self.isAudioSetup = false
           }
         }
       }
     } catch {
-      self.options.useMicrophone = false
+      self.isAudioSetup = false
     }
   }
 
@@ -367,4 +372,3 @@ public class SceneKitVideoRecorder: NSObject, AVAudioRecorderDelegate {
   }
 
 }
-

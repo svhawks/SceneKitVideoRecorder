@@ -9,6 +9,7 @@ import SceneKit
 import ARKit
 import AVFoundation
 import CoreImage
+import BrightFutures
 
 public class SceneKitVideoRecorder: NSObject, AVAudioRecorderDelegate {
   private var writer: AVAssetWriter!
@@ -23,6 +24,8 @@ public class SceneKitVideoRecorder: NSObject, AVAudioRecorderDelegate {
   private let frameQueue = DispatchQueue(label: "com.svtek.SceneKitVideoRecorder.frameQueue")
   private let bufferQueue = DispatchQueue(label: "com.svtek.SceneKitVideoRecorder.bufferQueue", attributes: .concurrent)
   private let audioQueue = DispatchQueue(label: "com.svtek.SceneKitVideoRecorder.audioQueue")
+
+  private let errorDomain = "com.svtek.SceneKitVideoRecorder"
 
   private var displayLink: CADisplayLink? = nil
 
@@ -168,30 +171,35 @@ public class SceneKitVideoRecorder: NSObject, AVAudioRecorderDelegate {
     writer.add(videoInput)
   }
 
-  public func startWriting(completionHandler: (@escaping (_ success: Bool) -> Void) = {_ in }) {
-
-    if isRecording { return }
+  public func startWriting() -> Future<Void, NSError> {
+    let promise = Promise<Void, NSError>()
+    guard !isRecording else {
+      promise.failure(NSError(domain: errorDomain, code: ErrorCode.recorderBusy.rawValue, userInfo: nil))
+      return promise.future
+    }
     isRecording = true
 
     startDisplayLink()
 
-    guard startInputPipeline() == true else {
-      print("AVAssetWriter Failed:", "Unknown error")
+    guard startInputPipeline() else {
       stopDisplayLink()
       cleanUp()
-      completionHandler(false)
-      return
+      promise.failure(NSError(domain: errorDomain, code: ErrorCode.unknown.rawValue, userInfo: nil))
+      return promise.future
     }
 
-    completionHandler(true)
-
+    promise.success()
+    return promise.future
   }
 
-  public func finishWriting(completionHandler: (@escaping (_ url: URL) -> Void)) {
+  public func finishWriting() -> Future<URL, NSError> {
 
-    if !isRecording { return }
-
-    if writer.status != .writing { return }
+    let promise = Promise<URL, NSError>()
+    guard isRecording, writer.status == .writing else {
+      let error = NSError(domain: errorDomain, code: ErrorCode.notReady.rawValue, userInfo: nil)
+      promise.failure(error)
+      return promise.future
+    }
 
     videoInput.markAsFinished()
 
@@ -205,26 +213,30 @@ public class SceneKitVideoRecorder: NSObject, AVAudioRecorderDelegate {
 
     currentTime = kCMTimeInvalid
 
-    writer.finishWriting(completionHandler: { [weak self] in
+    writer.finishWriting { [weak self] in
 
       guard let this = self else { return }
 
       this.stopDisplayLink()
 
       if this.useAudio {
-        this.mergeVideoAndAudio(videoUrl: this.options.videoOnlyUrl, audioUrl: this.options.audioOnlyUrl) {
+        this.mergeVideoAndAudio(videoUrl: this.options.videoOnlyUrl, audioUrl: this.options.audioOnlyUrl).onSuccess {
           let outputUrl = this.cleanUp()
-          completionHandler(outputUrl)
+          promise.success(outputUrl)
         }
-      }else{
+        .onFailure { error in
+          this.cleanUp()
+          promise.failure(error)
+        }
+      } else {
         FileController.move(from: this.options.videoOnlyUrl, to: this.options.outputUrl)
         let outputUrl = this.cleanUp()
-        completionHandler(outputUrl)
+        promise.success(outputUrl)
       }
 
       this.prepare()
-    })
-
+    }
+    return promise.future
   }
 
   private func getCurrentCMTime() -> CMTime {
@@ -237,11 +249,9 @@ public class SceneKitVideoRecorder: NSObject, AVAudioRecorderDelegate {
   }
 
   private func startDisplayLink() {
-
     displayLink = CADisplayLink(target: self, selector: #selector(updateDisplayLink))
     displayLink?.preferredFramesPerSecond = options.fps
     displayLink?.add(to: .main, forMode: .commonModes)
-
   }
 
   @objc private func updateDisplayLink() {
@@ -254,13 +264,10 @@ public class SceneKitVideoRecorder: NSObject, AVAudioRecorderDelegate {
 
       self?.renderSnapshot()
     }
-
   }
 
   private func startInputPipeline() -> Bool {
-
-    if writer.status != .unknown { return false }
-
+    guard writer.status == .unknown else { return false }
     guard writer.startWriting() else { return false }
 
     writer.startSession(atSourceTime: kCMTimeZero)
@@ -302,12 +309,9 @@ public class SceneKitVideoRecorder: NSObject, AVAudioRecorderDelegate {
       guard CMTIME_IS_VALID(appendTime) else { print("No append time"); return }
 
       bufferQueue.async { [weak self] in
-
         self?.pixelBufferAdaptor.append(pixelBuffer, withPresentationTime: appendTime)
-
       }
     }
-
   }
 
   private func stopDisplayLink() {
@@ -317,8 +321,10 @@ public class SceneKitVideoRecorder: NSObject, AVAudioRecorderDelegate {
 
   }
 
-  private func mergeVideoAndAudio(videoUrl:URL, audioUrl:URL, completion: @escaping () -> Void)
+  private func mergeVideoAndAudio(videoUrl:URL, audioUrl:URL) -> Future<Void, NSError>
   {
+    let promise = Promise<Void, NSError>()
+
     let mixComposition : AVMutableComposition = AVMutableComposition()
     var mutableCompositionVideoTrack : [AVMutableCompositionTrack] = []
     var mutableCompositionAudioTrack : [AVMutableCompositionTrack] = []
@@ -328,17 +334,21 @@ public class SceneKitVideoRecorder: NSObject, AVAudioRecorderDelegate {
     let aAudioAsset : AVAsset = AVAsset(url: audioUrl)
 
     mutableCompositionVideoTrack.append(mixComposition.addMutableTrack(withMediaType: AVMediaTypeVideo, preferredTrackID: kCMPersistentTrackID_Invalid))
-    mutableCompositionAudioTrack.append( mixComposition.addMutableTrack(withMediaType: AVMediaTypeAudio, preferredTrackID: kCMPersistentTrackID_Invalid))
+    mutableCompositionAudioTrack.append(mixComposition.addMutableTrack(withMediaType: AVMediaTypeAudio, preferredTrackID: kCMPersistentTrackID_Invalid))
+
+    guard !aVideoAsset.tracks.isEmpty, !aAudioAsset.tracks.isEmpty else {
+      let error = NSError(domain: errorDomain, code: ErrorCode.zeroFrames.rawValue, userInfo: nil)
+      promise.failure(error)
+      return promise.future
+    }
 
     let aVideoAssetTrack : AVAssetTrack = aVideoAsset.tracks(withMediaType: AVMediaTypeVideo)[0]
     let aAudioAssetTrack : AVAssetTrack = aAudioAsset.tracks(withMediaType: AVMediaTypeAudio)[0]
 
-    do{
+    do {
       try mutableCompositionVideoTrack[0].insertTimeRange(CMTimeRangeMake(kCMTimeZero, aVideoAssetTrack.timeRange.duration), of: aVideoAssetTrack, at: kCMTimeZero)
-
       try mutableCompositionAudioTrack[0].insertTimeRange(CMTimeRangeMake(kCMTimeZero, aVideoAssetTrack.timeRange.duration), of: aAudioAssetTrack, at: kCMTimeZero)
-
-    }catch{
+    } catch {
 
     }
 
@@ -360,15 +370,21 @@ public class SceneKitVideoRecorder: NSObject, AVAudioRecorderDelegate {
       switch assetExport.status {
 
       case AVAssetExportSessionStatus.completed:
-        completion()
+        promise.success()
       case  AVAssetExportSessionStatus.failed:
-        print("failed \(String(describing: assetExport.error))")
+        let assetExportErrorMessage = "failed \(String(describing: assetExport.error))"
+        let error = NSError(domain: self.errorDomain, code: ErrorCode.assetExport.rawValue, userInfo: ["Reason": assetExportErrorMessage])
+        promise.failure(error)
       case AVAssetExportSessionStatus.cancelled:
-        print("cancelled \(String(describing: assetExport.error))")
+        let assetExportErrorMessage = "cancelled \(String(describing: assetExport.error))"
+        let error = NSError(domain: self.errorDomain, code: ErrorCode.assetExport.rawValue, userInfo: ["Reason": assetExportErrorMessage])
+        promise.failure(error)
       default:
-        completion()
+        promise.success()
       }
     }
+
+    return promise.future
   }
 
 }

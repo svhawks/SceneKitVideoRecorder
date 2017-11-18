@@ -138,5 +138,5 @@ It supports iOS10 or later on Metal supported devices.
 
   # s.xcconfig = { "HEADER_SEARCH_PATHS" => "$(SDKROOT)/usr/include/libxml2" }
   # s.dependency "JSONKit", "~> 1.4"
-
+  s.dependency "BrightFutures", "~> 6.0"
 end

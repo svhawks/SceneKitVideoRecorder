@@ -12,7 +12,11 @@
 
 To run the example project, clone the repo, and run `pod install` from the Example directory first.
 
-## Requirements
+## Apps using SceneKitVideoRecorder
+
+[Surreal AR](https://itunes.apple.com/us/app/surreal-ar-augmented-reality/id1286981298?mt=8)
+
+*Send a PR to add your app here*
 
 ## Installation
 

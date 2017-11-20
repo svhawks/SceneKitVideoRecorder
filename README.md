@@ -51,18 +51,15 @@ override func viewDidLoad() {
 }
 
 @IBAction func startRecording (sender: UIButton) {
-  sender.backgroundColor = .red
-  //If you want to use the microphone you have to set it up before startWriting. You can do it here or earlier
-  self.recorder?.setupAudio()
-  self.recorder?.startWriting()
+  self.recorder?.startWriting().onSuccess {
+    print("Recording Started")
+  }
 }
 
 @IBAction func stopRecording (sender: UIButton) {
-  sender.backgroundColor = .white
-  self.recorder?.finishWriting(completionHandler: { [weak self] (url) in
+  self.recorder?.finishWriting().onSuccess { [weak self] url in
     print("Recording Finished", url)
-    self?.checkAuthorizationAndPresentActivityController(toShare: url, using: self!)
-  })
+  }
 }
 ```
 

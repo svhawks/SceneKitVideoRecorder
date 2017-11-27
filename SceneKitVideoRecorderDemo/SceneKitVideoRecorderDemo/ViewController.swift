@@ -48,16 +48,15 @@ class ViewController: UIViewController, ARSCNViewDelegate {
 
   @IBAction func startRecording (sender: UIButton) {
     sender.backgroundColor = .red
-    self.recorder?.setupAudio()
     self.recorder?.startWriting()
   }
 
   @IBAction func stopRecording (sender: UIButton) {
     sender.backgroundColor = .white
-    self.recorder?.finishWriting(completionHandler: { [weak self] (url) in
+    self.recorder?.finishWriting().onSuccess { [weak self] url in
       print("Recording Finished", url)
       self?.checkAuthorizationAndPresentActivityController(toShare: url, using: self!)
-    })
+    }
   }
 
   private func checkAuthorizationAndPresentActivityController(toShare data: Any, using presenter: UIViewController) {

@@ -16,7 +16,7 @@ Pod::Spec.new do |s|
   #
 
   s.name         = "SceneKitVideoRecorder"
-  s.version      = "1.4.1"
+  s.version      = "1.5.1"
   s.summary      = "Record videos of SceneKit and ARKit"
 
   # This description is used to generate tags and improve search results.
@@ -138,5 +138,5 @@ It supports iOS10 or later on Metal supported devices.
 
   # s.xcconfig = { "HEADER_SEARCH_PATHS" => "$(SDKROOT)/usr/include/libxml2" }
   # s.dependency "JSONKit", "~> 1.4"
-
+  s.dependency "BrightFutures"
 end

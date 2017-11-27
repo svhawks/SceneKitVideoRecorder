@@ -1,5 +1,9 @@
 PODS:
-  - SceneKitVideoRecorder (1.4.0)
+  - BrightFutures (6.0.0):
+    - Result (~> 3.2.4)
+  - Result (3.2.4)
+  - SceneKitVideoRecorder (1.4.3):
+    - BrightFutures (~> 6.0)
 
 DEPENDENCIES:
   - SceneKitVideoRecorder (from `../`)
@@ -9,7 +13,9 @@ EXTERNAL SOURCES:
     :path: ../
 
 SPEC CHECKSUMS:
-  SceneKitVideoRecorder: 57a0fdf26c31389638737f814fa6fc9d14fa098b
+  BrightFutures: 9e7604f511aed9f0d6a49b04ac9b3fca6b117758
+  Result: d2d07204ce72856f1fd9130bbe42c35a7b0fea10
+  SceneKitVideoRecorder: fc0efc8ddf1fdeaf3b88a415494ea75e899a7fbc
 
 PODFILE CHECKSUM: 021703fdf9e627ae9130f7f3490711d953c90f66
 

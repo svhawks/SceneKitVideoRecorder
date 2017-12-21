@@ -15,6 +15,7 @@ To run the example project, clone the repo, and run `pod install` from the Examp
 ## Apps using SceneKitVideoRecorder
 
 [Surreal AR](https://itunes.apple.com/us/app/surreal-ar-augmented-reality/id1286981298?mt=8)
+[Arrow](https://itunes.apple.com/app/arrow-ar-texts-emojis/id1296755150?ref=producthunt)
 
 *Send a PR to add your app here*
 

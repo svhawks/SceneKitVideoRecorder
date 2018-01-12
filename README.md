@@ -42,13 +42,19 @@ Add `NSMicrophoneUsageDescription` to `info.plist`
 
 Add below code to your view controller
 
-```
+``` swift
 var recorder: SceneKitVideoRecorder?
+override func viewDidLayoutSubviews() {
+    super.viewDidLayoutSubviews()
 
-override func viewDidLoad() {
-  super.viewDidLoad()
-  ...
-  recorder = try! SceneKitVideoRecorder(withARSCNView: sceneView)
+    if recorder == nil {
+        var options = SceneKitVideoRecorder.Options.default
+
+        let scale = UIScreen.main.nativeScale
+        let sceneSize = sceneView.bounds.size
+        options.videoSize = CGSize(width: sceneSize.width * scale, height: sceneSize.height * scale)
+        recorder = try! SceneKitVideoRecorder(withARSCNView: sceneView, options: options)
+    }
 }
 
 @IBAction func startRecording (sender: UIButton) {

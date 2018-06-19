@@ -176,6 +176,7 @@
 				TargetAttributes = {
 					2C1EA3781F6281C200E97D5E = {
 						CreatedOnToolsVersion = 9.0;
+						LastSwiftMigration = 0910;
 						ProvisioningStyle = Automatic;
 					};
 					2C3EB9571F9A580000AA77B4 = {
@@ -453,7 +454,8 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.okaris.SceneKitVideoRecorderDemo;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				SWIFT_VERSION = 3.0;
+				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
+				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -471,7 +473,8 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.okaris.SceneKitVideoRecorderDemo;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				SWIFT_VERSION = 3.0;
+				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
+				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;

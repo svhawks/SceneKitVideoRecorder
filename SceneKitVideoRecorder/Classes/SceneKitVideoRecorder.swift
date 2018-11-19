@@ -38,8 +38,8 @@ public class SceneKitVideoRecorder: NSObject, AVAudioRecorderDelegate {
 
   public var isAudioSetup: Bool = false
 
-  private var isPrepared: Bool = false
-  private var isRecording: Bool = false
+  public var isPrepared: Bool = false
+  public var isRecording: Bool = false
 
   private var useAudio: Bool {
     return options.useMicrophone && AVAudioSession.sharedInstance().recordPermission == .granted && isAudioSetup

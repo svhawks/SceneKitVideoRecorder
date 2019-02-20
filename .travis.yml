@@ -2,13 +2,17 @@
 # * http://www.objc.io/issue-6/travis-ci.html
 # * https://github.com/supermarin/xcpretty#usage
 
-osx_image: xcode9.1
-language: objective-c
+os: osx
+language: swift
+osx_image: xcode10.1
+
 cache: cocoapods
 podfile: Podfile
+
 before_install:
-- gem install cocoapods # Since Travis is not always on latest version
-- pod install --project-directory=SceneKitVideoRecorderDemo
+  - gem install cocoapods # Since Travis is not always on latest version
+  - pod install --project-directory=SceneKitVideoRecorderDemo
+
 script:
-- set -o pipefail && xcodebuild test -enableCodeCoverage YES -workspace SceneKitVideoRecorderDemo/SceneKitVideoRecorderDemo.xcworkspace -scheme SceneKitVideoRecorderDemo -sdk iphonesimulator -destination 'platform=iOS Simulator,name=iPhone 7' ONLY_ACTIVE_ARCH=NO | xcpretty
-- pod lib lint
+  - set -o pipefail && xcodebuild test -enableCodeCoverage YES -workspace SceneKitVideoRecorderDemo/SceneKitVideoRecorderDemo.xcworkspace -scheme SceneKitVideoRecorderDemo -sdk iphonesimulator -destination 'platform=iOS Simulator,name=iPhone 7' ONLY_ACTIVE_ARCH=NO | xcpretty
+  - pod lib lint

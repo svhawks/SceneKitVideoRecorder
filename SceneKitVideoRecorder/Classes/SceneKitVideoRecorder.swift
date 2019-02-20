@@ -29,8 +29,8 @@ public class SceneKitVideoRecorder: NSObject, AVAudioRecorderDelegate {
 
   private var displayLink: CADisplayLink? = nil
 
-  private var initialTime: CMTime = kCMTimeInvalid
-  private var currentTime: CMTime = kCMTimeInvalid
+  private var initialTime: CMTime = CMTime.invalid
+  private var currentTime: CMTime = CMTime.invalid
 
   private var sceneView: SCNView
 
@@ -42,7 +42,7 @@ public class SceneKitVideoRecorder: NSObject, AVAudioRecorderDelegate {
   private var isRecording: Bool = false
 
   private var useAudio: Bool {
-    return options.useMicrophone && AVAudioSession.sharedInstance().recordPermission() == .granted && isAudioSetup
+    return options.useMicrophone && AVAudioSession.sharedInstance().recordPermission == .granted && isAudioSetup
   }
   private var videoFramesWritten: Bool = false
   private var waitingForPermissions: Bool = false
@@ -89,7 +89,7 @@ public class SceneKitVideoRecorder: NSObject, AVAudioRecorderDelegate {
     self.renderer = SCNRenderer(device: device, options: nil)
     renderer.scene = self.sceneView.scene
 
-    initialTime = kCMTimeInvalid
+    initialTime = CMTime.invalid
 
     self.options.videoSize = options.videoSize
 
@@ -123,7 +123,7 @@ public class SceneKitVideoRecorder: NSObject, AVAudioRecorderDelegate {
     recordingSession = AVAudioSession.sharedInstance()
 
     do {
-      try recordingSession.setCategory(AVAudioSessionCategoryPlayAndRecord, with: [.defaultToSpeaker])
+        try recordingSession.setCategory(AVAudioSession.Category(rawValue: convertFromAVAudioSessionCategory(AVAudioSession.Category.playAndRecord)), mode:.default)
       try recordingSession.setActive(true)
       recordingSession.requestRecordPermission() { allowed in
         DispatchQueue.main.async {
@@ -211,7 +211,7 @@ public class SceneKitVideoRecorder: NSObject, AVAudioRecorderDelegate {
     isPrepared = false
     videoFramesWritten = false
 
-    currentTime = kCMTimeInvalid
+    currentTime = CMTime.invalid
 
     writer.finishWriting { [weak self] in
 
@@ -240,7 +240,7 @@ public class SceneKitVideoRecorder: NSObject, AVAudioRecorderDelegate {
   }
 
   private func getCurrentCMTime() -> CMTime {
-    return CMTimeMakeWithSeconds(CACurrentMediaTime(), 1000);
+    return CMTimeMakeWithSeconds(CACurrentMediaTime(), preferredTimescale: 1000);
   }
 
   private func getAppendTime() -> CMTime {
@@ -251,7 +251,7 @@ public class SceneKitVideoRecorder: NSObject, AVAudioRecorderDelegate {
   private func startDisplayLink() {
     displayLink = CADisplayLink(target: self, selector: #selector(updateDisplayLink))
     displayLink?.preferredFramesPerSecond = options.fps
-    displayLink?.add(to: .main, forMode: .commonModes)
+    displayLink?.add(to: .main, forMode: RunLoop.Mode.common)
   }
 
   @objc private func updateDisplayLink() {
@@ -270,7 +270,7 @@ public class SceneKitVideoRecorder: NSObject, AVAudioRecorderDelegate {
     guard writer.status == .unknown else { return false }
     guard writer.startWriting() else { return false }
 
-    writer.startSession(atSourceTime: kCMTimeZero)
+    writer.startSession(atSourceTime: CMTime.zero)
 
     videoInput.requestMediaDataWhenReady(on: frameQueue, using: {})
 
@@ -332,11 +332,6 @@ public class SceneKitVideoRecorder: NSObject, AVAudioRecorderDelegate {
 
     let aVideoAsset : AVAsset = AVAsset(url: videoUrl)
     let aAudioAsset : AVAsset = AVAsset(url: audioUrl)
-
-//<<<<<<< HEAD
-//    mutableCompositionVideoTrack.append(mixComposition.addMutableTrack(withMediaType: AVMediaType.video, preferredTrackID: kCMPersistentTrackID_Invalid)!)
-//    mutableCompositionAudioTrack.append( mixComposition.addMutableTrack(withMediaType: AVMediaType.audio, preferredTrackID: kCMPersistentTrackID_Invalid)!)
-//=======
     mutableCompositionVideoTrack.append(mixComposition.addMutableTrack(withMediaType: AVMediaType.video, preferredTrackID: kCMPersistentTrackID_Invalid)!)
     mutableCompositionAudioTrack.append(mixComposition.addMutableTrack(withMediaType: AVMediaType.audio, preferredTrackID: kCMPersistentTrackID_Invalid)!)
 
@@ -350,16 +345,16 @@ public class SceneKitVideoRecorder: NSObject, AVAudioRecorderDelegate {
     let aAudioAssetTrack : AVAssetTrack = aAudioAsset.tracks(withMediaType: AVMediaType.audio)[0]
 
     do {
-      try mutableCompositionVideoTrack[0].insertTimeRange(CMTimeRangeMake(kCMTimeZero, aVideoAssetTrack.timeRange.duration), of: aVideoAssetTrack, at: kCMTimeZero)
-      try mutableCompositionAudioTrack[0].insertTimeRange(CMTimeRangeMake(kCMTimeZero, aVideoAssetTrack.timeRange.duration), of: aAudioAssetTrack, at: kCMTimeZero)
+      try mutableCompositionVideoTrack[0].insertTimeRange(CMTimeRangeMake(start: CMTime.zero, duration: aVideoAssetTrack.timeRange.duration), of: aVideoAssetTrack, at: CMTime.zero)
+      try mutableCompositionAudioTrack[0].insertTimeRange(CMTimeRangeMake(start: CMTime.zero, duration: aVideoAssetTrack.timeRange.duration), of: aAudioAssetTrack, at: CMTime.zero)
     } catch {
 
     }
 
-    totalVideoCompositionInstruction.timeRange = CMTimeRangeMake(kCMTimeZero,aVideoAssetTrack.timeRange.duration )
+    totalVideoCompositionInstruction.timeRange = CMTimeRangeMake(start: CMTime.zero,duration: aVideoAssetTrack.timeRange.duration )
 
     let mutableVideoComposition : AVMutableVideoComposition = AVMutableVideoComposition()
-    mutableVideoComposition.frameDuration = CMTimeMake(1, Int32(self.options.fps))
+    mutableVideoComposition.frameDuration = CMTimeMake(value: 1, timescale: Int32(self.options.fps))
 
     mutableVideoComposition.renderSize = self.options.videoSize
 
@@ -373,13 +368,13 @@ public class SceneKitVideoRecorder: NSObject, AVAudioRecorderDelegate {
     assetExport.exportAsynchronously { () -> Void in
       switch assetExport.status {
 
-      case AVAssetExportSessionStatus.completed:
+      case AVAssetExportSession.Status.completed:
         promise.success(())
-      case  AVAssetExportSessionStatus.failed:
+      case  AVAssetExportSession.Status.failed:
         let assetExportErrorMessage = "failed \(String(describing: assetExport.error))"
         let error = NSError(domain: self.errorDomain, code: ErrorCode.assetExport.rawValue, userInfo: ["Reason": assetExportErrorMessage])
         promise.failure(error)
-      case AVAssetExportSessionStatus.cancelled:
+      case AVAssetExportSession.Status.cancelled:
         let assetExportErrorMessage = "cancelled \(String(describing: assetExport.error))"
         let error = NSError(domain: self.errorDomain, code: ErrorCode.assetExport.rawValue, userInfo: ["Reason": assetExportErrorMessage])
         promise.failure(error)
@@ -391,4 +386,9 @@ public class SceneKitVideoRecorder: NSObject, AVAudioRecorderDelegate {
     return promise.future
   }
 
+}
+
+// Helper function inserted by Swift 4.2 migrator.
+fileprivate func convertFromAVAudioSessionCategory(_ input: AVAudioSession.Category) -> String {
+	return input.rawValue
 }

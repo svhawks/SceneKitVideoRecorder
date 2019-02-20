@@ -48,7 +48,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
 
   @IBAction func startRecording (sender: UIButton) {
     sender.backgroundColor = .red
-    self.recorder?.startWriting()
+    _ = self.recorder?.startWriting()
   }
 
   @IBAction func stopRecording (sender: UIButton) {
@@ -63,20 +63,20 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     switch PHPhotoLibrary.authorizationStatus() {
     case .authorized:
       let activityViewController = UIActivityViewController(activityItems: [data], applicationActivities: nil)
-      activityViewController.excludedActivityTypes = [UIActivityType.addToReadingList, UIActivityType.openInIBooks, UIActivityType.print]
+      activityViewController.excludedActivityTypes = [UIActivity.ActivityType.addToReadingList, UIActivity.ActivityType.openInIBooks, UIActivity.ActivityType.print]
       presenter.present(activityViewController, animated: true, completion: nil)
     case .restricted, .denied:
       let libraryRestrictedAlert = UIAlertController(title: "Photos access denied",
                                                      message: "Please enable Photos access for this application in Settings > Privacy to allow saving screenshots.",
-                                                     preferredStyle: UIAlertControllerStyle.alert)
+                                                     preferredStyle: UIAlertController.Style.alert)
       libraryRestrictedAlert.addAction(UIAlertAction(title: "Okay", style: .default, handler: nil))
       presenter.present(libraryRestrictedAlert, animated: true, completion: nil)
     case .notDetermined:
       PHPhotoLibrary.requestAuthorization({ (authorizationStatus) in
         if authorizationStatus == .authorized {
           let activityViewController = UIActivityViewController(activityItems: [data], applicationActivities: nil)
-          activityViewController.excludedActivityTypes = [UIActivityType.addToReadingList, UIActivityType.openInIBooks, UIActivityType.print]
-          presenter.present(activityViewController, animated: true, completion: nil)
+            activityViewController.excludedActivityTypes = [UIActivity.ActivityType.addToReadingList, UIActivity.ActivityType.openInIBooks, UIActivity.ActivityType.print]
+            presenter.present(activityViewController, animated: true, completion: nil)
         }
       })
     }

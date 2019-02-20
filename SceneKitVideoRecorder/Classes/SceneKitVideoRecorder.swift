@@ -92,8 +92,8 @@ public class SceneKitVideoRecorder: NSObject, AVAudioRecorderDelegate {
     initialTime = CMTime.invalid
 
     self.options.videoSize = options.videoSize
-
-    writer = try! AVAssetWriter(outputURL: self.options.videoOnlyUrl, fileType: AVFileType(rawValue: self.options.fileType))
+    
+    writer = try! AVAssetWriter(outputURL: self.options.videoOnlyUrl, fileType: self.options.fileType)
 
     self.setupVideo()
   }
@@ -123,9 +123,10 @@ public class SceneKitVideoRecorder: NSObject, AVAudioRecorderDelegate {
     recordingSession = AVAudioSession.sharedInstance()
 
     do {
-        try recordingSession.setCategory(AVAudioSession.Category(rawValue: convertFromAVAudioSessionCategory(AVAudioSession.Category.playAndRecord)), mode:.default)
-      try recordingSession.setActive(true)
-      recordingSession.requestRecordPermission() { allowed in
+        try recordingSession.setCategory(AVAudioSession.Category.playAndRecord, mode: .default)
+        try recordingSession.setActive(true)
+        
+        recordingSession.requestRecordPermission() { allowed in
         DispatchQueue.main.async {
           if allowed {
             self.isAudioSetup = true
@@ -386,9 +387,4 @@ public class SceneKitVideoRecorder: NSObject, AVAudioRecorderDelegate {
     return promise.future
   }
 
-}
-
-// Helper function inserted by Swift 4.2 migrator.
-fileprivate func convertFromAVAudioSessionCategory(_ input: AVAudioSession.Category) -> String {
-	return input.rawValue
 }

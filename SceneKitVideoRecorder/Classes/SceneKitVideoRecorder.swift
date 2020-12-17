@@ -293,8 +293,6 @@ public class SceneKitVideoRecorder: NSObject, AVAudioRecorderDelegate {
 
       guard let pixelBuffer = pixelBufferTemp else { print("No buffer"); return }
 
-      guard videoInput.isReadyForMoreMediaData else { print("No ready for media data"); return }
-
       if videoFramesWritten == false {
         videoFramesWritten = true
         startRecordingAudio()
@@ -310,7 +308,9 @@ public class SceneKitVideoRecorder: NSObject, AVAudioRecorderDelegate {
       guard CMTIME_IS_VALID(appendTime) else { print("No append time"); return }
 
       bufferQueue.async { [weak self] in
-        self?.pixelBufferAdaptor.append(pixelBuffer, withPresentationTime: appendTime)
+        if true == self?.videoInput.isReadyForMoreMediaData {
+            self?.pixelBufferAdaptor.append(pixelBuffer, withPresentationTime: appendTime)
+        }
       }
     }
   }
